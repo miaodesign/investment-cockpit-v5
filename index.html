@@ -767,6 +767,97 @@
     </div>
 
     <script>
+        // ===== 真实账户数据 =====
+        const accountData = {
+            "agongzi": {
+                "stocks": [
+                    {"name": "兆易创新", "code": "603986.SH", "qty": 300, "cost": 353.639, "price": 468.74, "tag": "芯片", "market": 140622.0, "pnl": 34530.3, "pnlPct": 32.55},
+                    {"name": "光迅科技", "code": "002281.SZ", "qty": 200, "cost": 155.526, "price": 215.87, "tag": "光模块", "market": 43174.0, "pnl": 12068.8, "pnlPct": 38.80},
+                    {"name": "东山精密", "code": "002384.SZ", "qty": 200, "cost": 155.127, "price": 220.55, "tag": "精密制造", "market": 44110.0, "pnl": 13084.6, "pnlPct": 42.17},
+                    {"name": "东材科技", "code": "601208.SH", "qty": 1000, "cost": 52.445, "price": 52.45, "tag": "材料", "market": 52450.0, "pnl": 5.0, "pnlPct": 0.01},
+                    {"name": "科创芯片ETF华安", "code": "588290.SH", "qty": 9000, "cost": 1.24, "price": 3.565, "tag": "ETF", "market": 32085.0, "pnl": 20925.0, "pnlPct": 187.50},
+                    {"name": "中国平安", "code": "601318.SH", "qty": 100, "cost": -9.338, "price": 53.68, "tag": "金融", "market": 5368.0, "pnl": 6301.8, "pnlPct": 674.86}
+                ],
+                "cash": 232473.76,
+                "market": 317809.0,
+                "pnl": 86915.50,
+                "total": 550282.76
+            },
+            "alipay": {
+                "funds": [
+                    {"name": "南方有色金属ETF联接C", "code": "004433", "cost": 1.799, "qty": 32400.62, "nav": 1.9186, "tag": "有色", "market": 62163.83, "pnl": 3875.11, "pnlPct": 6.65},
+                    {"name": "中银国有企业债券C", "code": "006331", "cost": 1.2132, "qty": 44466.43, "nav": 1.2445, "tag": "债券", "market": 55338.47, "pnl": 1391.80, "pnlPct": 2.58},
+                    {"name": "广发纳斯达克100ETF联接A", "code": "270042", "cost": 5.4487, "qty": 2877.45, "nav": 8.2497, "tag": "QDII", "market": 23738.10, "pnl": 8059.74, "pnlPct": 51.41},
+                    {"name": "易方达全球成长精选混合C", "code": "012922", "cost": 2.5167, "qty": 14745.35, "nav": 3.9719, "tag": "QDII", "market": 58567.06, "pnl": 21457.43, "pnlPct": 57.82},
+                    {"name": "永赢创业板指数C", "code": "007665", "cost": 1.624, "qty": 48254.7, "nav": 2.1429, "tag": "指数", "market": 103404.99, "pnl": 25039.36, "pnlPct": 31.95},
+                    {"name": "博时黄金ETF联接C", "code": "002611", "cost": 2.4116, "qty": 37774.16, "nav": 3.1185, "tag": "黄金", "market": 117798.72, "pnl": 26702.55, "pnlPct": 29.31},
+                    {"name": "中金中证500指数增强C", "code": "003578", "cost": 2.0679, "qty": 40070.39, "nav": 2.5253, "tag": "指数", "market": 101189.76, "pnl": 18328.20, "pnlPct": 22.12},
+                    {"name": "华夏大中华信用精选债券A", "code": "002877", "cost": 1.0417, "qty": 52538.95, "nav": 1.0283, "tag": "债券", "market": 54025.80, "pnl": -704.02, "pnlPct": -1.29},
+                    {"name": "嘉实全球产业升级股票C", "code": "017731", "cost": 2.5833, "qty": 9716.15, "nav": 4.0329, "tag": "QDII", "market": 39184.26, "pnl": 14084.53, "pnlPct": 56.11},
+                    {"name": "中欧红利优享灵活配置混合C", "code": "004815", "cost": 2.0998, "qty": 16745.53, "nav": 1.9433, "tag": "混合", "market": 32541.59, "pnl": -2620.68, "pnlPct": -7.45},
+                    {"name": "广发全球精选股票A", "code": "270023", "cost": 4.2823, "qty": 11005.09, "nav": 6.3839, "tag": "QDII", "market": 70255.39, "pnl": 23128.30, "pnlPct": 49.08},
+                    {"name": "天弘纳斯达克100指数C", "code": "018044", "cost": 1.4529, "qty": 6038.75, "nav": 2.026, "tag": "QDII", "market": 12234.51, "pnl": 3460.81, "pnlPct": 39.45},
+                    {"name": "永赢科技智选混合C", "code": "022365", "cost": 2.8519, "qty": 29155.82, "nav": 5.4687, "tag": "科技", "market": 159444.43, "pnl": 76294.95, "pnlPct": 91.76}
+                ],
+                "yuebao": 22416,
+                "market": 889886.91,
+                "pnl": 218498.09,
+                "total": 912302.91
+            },
+            "zhaohang": {
+                "gold": 46450.55,
+                "gold_pnl": 7955.22,
+                "licai": 109059,
+                "cash": 12250,
+                "total": 167759.55
+            },
+            "summary": {
+                "total_assets": 1630345.22,
+                "total_pnl": 313368.81
+            }
+        };
+
+        // ===== 格式化函数 =====
+        function formatMoney(num) {
+            return '¥' + Math.round(num).toLocaleString('zh-CN');
+        }
+        
+        function formatMoneyDecimal(num) {
+            return '¥' + num.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+        
+        function formatPct(num) {
+            return (num >= 0 ? '+' : '') + num.toFixed(2) + '%';
+        }
+
+        // ===== 初始化数据展示 =====
+        function initDashboard() {
+            const summary = accountData.summary;
+            const agongzi = accountData.agongzi;
+            const alipay = accountData.alipay;
+            const zhaohang = accountData.zhaohang;
+            
+            // 计算汇总数据
+            const totalCash = agongzi.cash + alipay.yuebao + zhaohang.cash;
+            const totalMarket = agongzi.market + alipay.market + zhaohang.gold + zhaohang.licai;
+            const positionRatio = (totalMarket / summary.total_assets * 100).toFixed(1);
+            const pnlPct = (summary.total_pnl / (summary.total_assets - summary.total_pnl) * 100).toFixed(2);
+            
+            // 更新总资产卡片
+            document.querySelector('.asset-value').textContent = formatMoney(summary.total_assets);
+            document.querySelector('.asset-change').innerHTML = `
+                <span>${summary.total_pnl >= 0 ? '+' : ''}</span>
+                <span>${formatMoney(summary.total_pnl)}</span>
+                <span style="opacity: 0.8;">(${formatPct(pnlPct)})</span>
+            `;
+            
+            // 更新账户卡片
+            const accountCards = document.querySelectorAll('.account-card');
+            accountCards[0].querySelector('.account-value').textContent = formatMoney(agongzi.total);
+            accountCards[1].querySelector('.account-value').textContent = formatMoney(alipay.total);
+            accountCards[2].querySelector('.account-value').textContent = formatMoney(zhaohang.total);
+        }
+
         // Tab switching
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', function() {
@@ -816,6 +907,9 @@
                 console.log('Refreshing...');
             }
         });
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', initDashboard);
     </script>
 </body>
 </html>
