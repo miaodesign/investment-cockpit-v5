@@ -544,7 +544,12 @@
         const costTotal = s.qty * s.cost;
         const pnl = market - costTotal;
         const pnlPct = costTotal !== 0 ? (pnl / Math.abs(costTotal)) * 100 : 0;
-        return { ...s, market, pnl, pnlPct };
+        // 动态止损止盈计算
+        const stopLossPrice = s.cost > 0 ? s.cost * 0.92 : s.price * 0.92; // 止损-8%
+        const takeProfitPrice = s.cost > 0 ? s.cost * 1.30 : s.price * 1.30; // 止盈+30%
+        const stopLossPct = ((s.price - stopLossPrice) / s.price * 100).toFixed(1);
+        const takeProfitPct = ((takeProfitPrice - s.price) / s.price * 100).toFixed(1);
+        return { ...s, market, pnl, pnlPct, stopLossPrice, takeProfitPrice, stopLossPct, takeProfitPct };
     }
 
     function calcFund(f) {
@@ -621,10 +626,15 @@
         const sortedStocks = [...aStocks].sort((x, y) => y.pnl - x.pnl);
         sortedStocks.forEach(s => {
             const tagClass = s.pnlPct > 50 ? 'gold' : s.pnlPct < 0 ? 'red' : 'green';
+            const stopLossClass = s.stopLossPct < 5 ? 'red' : '';
             html += `<div class="holding-item">
                 <div class="holding-left">
                     <div class="holding-top"><span class="holding-name">${s.name}</span><span class="holding-tag ${tagClass}">${s.tag}</span></div>
                     <div class="holding-code">${s.code} · ${s.qty.toLocaleString()}股 · 成本 ${s.cost < 0 ? '负成本' : '¥' + s.cost.toFixed(2)}</div>
+                    <div class="holding-stop" style="margin-top:4px;font-size:10px;display:flex;gap:12px;">
+                        <span style="color:var(--up);">止损 ¥${s.stopLossPrice.toFixed(2)} <span style="opacity:0.7">(-${s.stopLossPct}%)</span></span>
+                        <span style="color:var(--down);">止盈 ¥${s.takeProfitPrice.toFixed(2)} <span style="opacity:0.7">(+${s.takeProfitPct}%)</span></span>
+                    </div>
                 </div>
                 <div class="holding-right">
                     <div class="holding-pnl ${pnlClass(s.pnl)}">${s.pnl >= 0 ? '+' : ''}¥${fmt(s.pnl)}</div>
