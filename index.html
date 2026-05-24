@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#F2F2F7">
+    <title>AURORA-X Dashboard</title>
+    <link rel="stylesheet" href="design-system.css">
+    <style>
+        /* AURORA-X Dashboard Specific Styles */
+        
+        /* Dashboard Header */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid var(--ios-gray5);
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .dashboard-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dashboard-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .dashboard-subtitle {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+        
+        /* Total Asset Card */
+        .asset-card {
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .asset-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .asset-label {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+        
+        .asset-value {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .asset-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+        
+        /* Account Cards Grid */
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+            margin-bottom: 24px;
+        }
+        
+        .account-card {
+            background: var(--ios-bg-secondary);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 0.5px 2px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+        
+        .account-card:active {
+            transform: scale(0.98);
+        }
+        
+        .account-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 18px;
+        }
+        
+        .account-icon.a-gongzi {
+            background: linear-gradient(135deg, #FF3B30 0%, #FF6B6B 100%);
+        }
+        
+        .account-icon.alipay {
+            background: linear-gradient(135deg, #1677FF 0%, #36A8FF 100%);
+        }
+        
+        .account-icon.cmb {
+            background: linear-gradient(135deg, #E60012 0%, #FF4757 100%);
+        }
+        
+        .account-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .account-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .account-tag {
+            font-size: 9px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+        
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 16px 8px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .section-action {
+            font-size: 14px;
+            color: var(--ios-blue);
+            font-weight: 500;
+        }
+        
+        /* Holdings List */
+        .holdings-list {
+            background: var(--ios-bg-secondary);
+            margin: 0 16px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .holding-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 0.5px solid var(--ios-gray5);
+            transition: background-color 0.15s ease;
+        }
+        
+        .holding-item:last-child {
+            border-bottom: none;
+        }
+        
+        .holding-item:active {
+            background-color: var(--ios-gray6);
+        }
+        
+        .holding-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .holding-icon.diamond {
+            background: linear-gradient(135deg, #AF52DE 0%, #C77DFF 100%);
+        }
+        
+        .holding-icon.chip {
+            background: linear-gradient(135deg, #FF3B30 0%, #FF6B6B 100%);
+        }
+        
+        .holding-icon.module {
+            background: linear-gradient(135deg, #34C759 0%, #5CDD7A 100%);
+        }
+        
+        .holding-icon.etf {
+            background: linear-gradient(135deg, #FF9500 0%, #FFBB33 100%);
+        }
+        
+        .holding-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .holding-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .holding-tag {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .holding-tag.diamond {
+            background: rgba(175, 82, 222, 0.15);
+            color: #AF52DE;
+        }
+        
+        .holding-tag.score {
+            background: rgba(255, 59, 48, 0.15);
+            color: #FF3B30;
+        }
+        
+        .holding-code {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+        
+        .holding-value {
+            text-align: right;
+            flex-shrink: 0;
+        }
+        
+        .holding-pnl {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .holding-pnl.up {
+            color: var(--finance-up);
+        }
+        
+        .holding-pnl.down {
+            color: var(--finance-down);
+        }
+        
+        .holding-pnl-pct {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .holding-pnl-pct.up {
+            color: var(--finance-up);
+        }
+        
+        .holding-pnl-pct.down {
+            color: var(--finance-down);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        .quick-actions::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .quick-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 20px;
+            background: var(--ios-bg-secondary);
+            border-radius: 12px;
+            min-width: 72px;
+            transition: transform 0.15s ease;
+        }
+        
+        .quick-action-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .quick-action-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .quick-action-icon.blue {
+            background: rgba(0, 122, 255, 0.15);
+        }
+        
+        .quick-action-icon.green {
+            background: rgba(52, 199, 89, 0.15);
+        }
+        
+        .quick-action-icon.orange {
+            background: rgba(255, 149, 0, 0.15);
+        }
+        
+        .quick-action-icon.purple {
+            background: rgba(175, 82, 222, 0.15);
+        }
+        
+        .quick-action-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        /* Market Overview */
+        .market-overview {
+            background: var(--ios-bg-secondary);
+            margin: 0 16px 16px;
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .market-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        .market-item {
+            text-align: center;
+        }
+        
+        .market-name {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+        }
+        
+        .market-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .market-change {
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        
+        /* Tab Bar */
+        .tab-bar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid var(--ios-gray5);
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 16px;
+            color: var(--ios-gray);
+            transition: color 0.2s ease;
+        }
+        
+        .tab-item.active {
+            color: var(--ios-blue);
+        }
+        
+        .tab-icon {
+            font-size: 22px;
+            line-height: 1;
+        }
+        
+        .tab-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        /* Content Spacing for Tab Bar */
+        .content {
+            padding-bottom: 80px;
+        }
+        
+        /* Risk Alert Banner */
+        .risk-banner {
+            background: rgba(255, 59, 48, 0.08);
+            border-left: 3px solid var(--ios-red);
+            padding: 12px 16px;
+            margin: 0 16px 16px;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .risk-icon {
+            font-size: 18px;
+        }
+        
+        .risk-text {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+        
+        /* Checklist Section */
+        .checklist-section {
+            background: var(--ios-bg-secondary);
+            margin: 0 16px 16px;
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .checklist-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 0.5px solid var(--ios-gray5);
+        }
+        
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--ios-gray4);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        
+        .checklist-checkbox.checked {
+            background: var(--ios-blue);
+            border-color: var(--ios-blue);
+        }
+        
+        .checklist-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        
+        .checklist-text.completed {
+            color: var(--text-tertiary);
+            text-decoration: line-through;
+        }
+        
+        /* Responsive Adjustments */
+        @media (min-width: 768px) {
+            .accounts-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 600px;
+                margin: 0 auto 24px;
+            }
+            
+            .holdings-list {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .dashboard-container {
+                max-width: 1024px;
+                margin: 0 auto;
+            }
+            
+            .accounts-grid {
+                max-width: 700px;
+            }
+            
+            .holdings-list {
+                max-width: 700px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="dashboard-header-content">
+                <div>
+                    <div class="dashboard-title">AURORA-X</div>
+                    <div class="dashboard-subtitle">投资驾驶舱</div>
+                </div>
+                <div style="font-size: 20px;">&#128269;</div>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- Total Asset Card -->
+            <div class="asset-card">
+                <div class="asset-label">总资产</div>
+                <div class="asset-value">\u00A51,630,345</div>
+                <div class="asset-change">
+                    <span>+</span>
+                    <span>\u00A5313,369</span>
+                    <span style="opacity: 0.8;">(+23.79%)</span>
+                </div>
+            </div>
+
+            <!-- Account Cards -->
+            <div class="accounts-grid">
+                <div class="account-card">
+                    <div class="account-icon a-gongzi">&#128200;</div>
+                    <div class="account-name">A公子</div>
+                    <div class="account-value">\u00A5550,283</div>
+                    <div class="account-tag">趋势的矛</div>
+                </div>
+                <div class="account-card">
+                    <div class="account-icon alipay">&#128176;</div>
+                    <div class="account-name">支付宝</div>
+                    <div class="account-value">\u00A5912,303</div>
+                    <div class="account-tag">配置的盾</div>
+                </div>
+                <div class="account-card">
+                    <div class="account-icon cmb">&#127775;</div>
+                    <div class="account-name">招行</div>
+                    <div class="account-value">\u00A5167,760</div>
+                    <div class="account-tag">流动性的锚</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="quick-action-btn">
+                    <div class="quick-action-icon blue">&#128200;</div>
+                    <div class="quick-action-label">趋势</div>
+                </div>
+                <div class="quick-action-btn">
+                    <div class="quick-action-icon green">&#128176;</div>
+                    <div class="quick-action-label">交易</div>
+                </div>
+                <div class="quick-action-btn">
+                    <div class="quick-action-icon orange">&#128466;</div>
+                    <div class="quick-action-label">日志</div>
+                </div>
+                <div class="quick-action-btn">
+                    <div class="quick-action-icon purple">&#128640;</div>
+                    <div class="quick-action-label">复盘</div>
+                </div>
+            </div>
+
+            <!-- Risk Alert -->
+            <div class="risk-banner">
+                <div class="risk-icon">&#9888;</div>
+                <div class="risk-text">
+                    <strong>A公子趋势投资系统</strong><br>
+                    评分≥70分持有 | 止损-6% | 移动止盈15-20%
+                </div>
+            </div>
+
+            <!-- Market Overview -->
+            <div class="market-overview">
+                <div class="market-title">市场行情</div>
+                <div class="market-grid">
+                    <div class="market-item">
+                        <div class="market-name">上证指数</div>
+                        <div class="market-value">3,245.67</div>
+                        <div class="market-change" style="color: var(--finance-up);">+0.85%</div>
+                    </div>
+                    <div class="market-item">
+                        <div class="market-name">深证成指</div>
+                        <div class="market-value">10,892.34</div>
+                        <div class="market-change" style="color: var(--finance-up);">+1.12%</div>
+                    </div>
+                    <div class="market-item">
+                        <div class="market-name">创业板指</div>
+                        <div class="market-value">2,156.78</div>
+                        <div class="market-change" style="color: var(--finance-down);">-0.23%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Header -->
+            <div class="section-header">
+                <div class="section-title">A公子持仓</div>
+                <div class="section-action">查看全部</div>
+            </div>
+
+            <!-- Holdings List -->
+            <div class="holdings-list">
+                <div class="holding-item">
+                    <div class="holding-icon diamond">兆</div>
+                    <div class="holding-info">
+                        <div class="holding-name">
+                            兆易创新
+                            <span class="holding-tag diamond">金刚池</span>
+                            <span class="holding-tag score">92分</span>
+                        </div>
+                        <div class="holding-code">603986 · 300股</div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-pnl up">+\u00A534,530</div>
+                        <div class="holding-pnl-pct up">+32.55%</div>
+                    </div>
+                </div>
+
+                <div class="holding-item">
+                    <div class="holding-icon module">科</div>
+                    <div class="holding-info">
+                        <div class="holding-name">
+                            科创芯片ETF
+                            <span class="holding-tag score">95分</span>
+                        </div>
+                        <div class="holding-code">588290 · 9,000份</div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-pnl up">+\u00A520,925</div>
+                        <div class="holding-pnl-pct up">+187.50%</div>
+                    </div>
+                </div>
+
+                <div class="holding-item">
+                    <div class="holding-icon chip">光</div>
+                    <div class="holding-info">
+                        <div class="holding-name">
+                            光迅科技
+                            <span class="holding-tag score">88分</span>
+                        </div>
+                        <div class="holding-code">002281 · 200股</div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-pnl up">+\u00A512,069</div>
+                        <div class="holding-pnl-pct up">+38.80%</div>
+                    </div>
+                </div>
+
+                <div class="holding-item">
+                    <div class="holding-icon chip">东</div>
+                    <div class="holding-info">
+                        <div class="holding-name">
+                            东山精密
+                            <span class="holding-tag diamond">金刚池</span>
+                            <span class="holding-tag score">85分</span>
+                        </div>
+                        <div class="holding-code">002384 · 200股</div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-pnl up">+\u00A513,085</div>
+                        <div class="holding-pnl-pct up">+42.17%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Checklist -->
+            <div class="checklist-section">
+                <div class="checklist-title">&#9728; 开盘前检查清单</div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox checked">&#10003;</div>
+                    <div class="checklist-text completed">心理状态评分（当前：3分 冷静）</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox checked">&#10003;</div>
+                    <div class="checklist-text completed">大盘环境判断（偏多环境）</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox"></div>
+                    <div class="checklist-text">持仓止损止盈位检查</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox"></div>
+                    <div class="checklist-text">五池候选标的筛选</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <nav class="tab-bar">
+            <div class="tab-item active">
+                <div class="tab-icon">&#127968;</div>
+                <div class="tab-label">首页</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon">&#128200;</div>
+                <div class="tab-label">持仓</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon">&#128176;</div>
+                <div class="tab-label">交易</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon">&#128640;</div>
+                <div class="tab-label">五池</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon">&#9881;</div>
+                <div class="tab-label">设置</div>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Checklist toggle
+        document.querySelectorAll('.checklist-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const checkbox = this.querySelector('.checklist-checkbox');
+                const text = this.querySelector('.checklist-text');
+                checkbox.classList.toggle('checked');
+                text.classList.toggle('completed');
+                if (checkbox.classList.contains('checked')) {
+                    checkbox.innerHTML = '&#10003;';
+                } else {
+                    checkbox.innerHTML = '';
+                }
+            });
+        });
+
+        // Touch feedback for holding items
+        document.querySelectorAll('.holding-item').forEach(item => {
+            item.addEventListener('touchstart', function() {
+                this.style.backgroundColor = 'var(--ios-gray6)';
+            });
+            item.addEventListener('touchend', function() {
+                this.style.backgroundColor = '';
+            });
+        });
+
+        // Pull to refresh simulation
+        let touchStartY = 0;
+        const content = document.querySelector('.content');
+        
+        content.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        content.addEventListener('touchmove', function(e) {
+            const touchY = e.touches[0].clientY;
+            const diff = touchY - touchStartY;
+            if (diff > 100 && window.scrollY === 0) {
+                // Trigger refresh
+                console.log('Refreshing...');
+            }
+        });
+    </script>
+</body>
+</html>
