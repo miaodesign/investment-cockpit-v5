@@ -294,6 +294,16 @@
             color: var(--finance-down);
         }
         
+        .holding-icon.up {
+            background: rgba(255, 59, 48, 0.15);
+            color: #FF3B30;
+        }
+        
+        .holding-icon.down {
+            background: rgba(52, 199, 89, 0.15);
+            color: #34C759;
+        }
+        
         /* Quick Actions */
         .quick-actions {
             display: flex;
@@ -443,6 +453,21 @@
             padding-bottom: 80px;
         }
         
+        /* Tab Panel Styles */
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         /* Risk Alert Banner */
         .risk-banner {
             background: rgba(255, 59, 48, 0.08);
@@ -564,179 +589,257 @@
         </header>
 
         <div class="content">
-            <!-- Total Asset Card -->
-            <div class="asset-card">
-                <div class="asset-label">总资产</div>
-                <div class="asset-value">\u00A51,630,345</div>
-                <div class="asset-change">
-                    <span>+</span>
-                    <span>\u00A5313,369</span>
-                    <span style="opacity: 0.8;">(+23.79%)</span>
-                </div>
-            </div>
-
-            <!-- Account Cards -->
-            <div class="accounts-grid">
-                <div class="account-card">
-                    <div class="account-icon a-gongzi">&#128200;</div>
-                    <div class="account-name">A公子</div>
-                    <div class="account-value">\u00A5550,283</div>
-                    <div class="account-tag">趋势的矛</div>
-                </div>
-                <div class="account-card">
-                    <div class="account-icon alipay">&#128176;</div>
-                    <div class="account-name">支付宝</div>
-                    <div class="account-value">\u00A5912,303</div>
-                    <div class="account-tag">配置的盾</div>
-                </div>
-                <div class="account-card">
-                    <div class="account-icon cmb">&#127775;</div>
-                    <div class="account-name">招行</div>
-                    <div class="account-value">\u00A5167,760</div>
-                    <div class="account-tag">流动性的锚</div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <div class="quick-action-btn">
-                    <div class="quick-action-icon blue">&#128200;</div>
-                    <div class="quick-action-label">趋势</div>
-                </div>
-                <div class="quick-action-btn">
-                    <div class="quick-action-icon green">&#128176;</div>
-                    <div class="quick-action-label">交易</div>
-                </div>
-                <div class="quick-action-btn">
-                    <div class="quick-action-icon orange">&#128466;</div>
-                    <div class="quick-action-label">日志</div>
-                </div>
-                <div class="quick-action-btn">
-                    <div class="quick-action-icon purple">&#128640;</div>
-                    <div class="quick-action-label">复盘</div>
-                </div>
-            </div>
-
-            <!-- Risk Alert -->
-            <div class="risk-banner">
-                <div class="risk-icon">&#9888;</div>
-                <div class="risk-text">
-                    <strong>A公子趋势投资系统</strong><br>
-                    评分≥70分持有 | 止损-6% | 移动止盈15-20%
-                </div>
-            </div>
-
-            <!-- Market Overview -->
-            <div class="market-overview">
-                <div class="market-title">市场行情</div>
-                <div class="market-grid">
-                    <div class="market-item">
-                        <div class="market-name">上证指数</div>
-                        <div class="market-value">3,245.67</div>
-                        <div class="market-change" style="color: var(--finance-up);">+0.85%</div>
-                    </div>
-                    <div class="market-item">
-                        <div class="market-name">深证成指</div>
-                        <div class="market-value">10,892.34</div>
-                        <div class="market-change" style="color: var(--finance-up);">+1.12%</div>
-                    </div>
-                    <div class="market-item">
-                        <div class="market-name">创业板指</div>
-                        <div class="market-value">2,156.78</div>
-                        <div class="market-change" style="color: var(--finance-down);">-0.23%</div>
+            <!-- ===== TAB 1: 首页 ===== -->
+            <div id="tab-home" class="tab-panel active">
+                <!-- Total Asset Card -->
+                <div class="asset-card">
+                    <div class="asset-label">总资产</div>
+                    <div class="asset-value" id="home-total-assets">¥1,630,345</div>
+                    <div class="asset-change" id="home-total-pnl">
+                        <span>+</span>
+                        <span>¥313,369</span>
+                        <span style="opacity: 0.8;">(+23.79%)</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- Section Header -->
-            <div class="section-header">
-                <div class="section-title">A公子持仓</div>
-                <div class="section-action">查看全部</div>
-            </div>
+                <!-- Account Cards -->
+                <div class="accounts-grid">
+                    <div class="account-card" onclick="switchTabPanel('holdings')">
+                        <div class="account-icon a-gongzi">📈</div>
+                        <div class="account-name">A公子</div>
+                        <div class="account-value" id="home-agongzi-value">¥550,283</div>
+                        <div class="account-tag">趋势的矛</div>
+                    </div>
+                    <div class="account-card" onclick="switchTabPanel('holdings')">
+                        <div class="account-icon alipay">💰</div>
+                        <div class="account-name">支付宝</div>
+                        <div class="account-value" id="home-alipay-value">¥912,303</div>
+                        <div class="account-tag">配置的盾</div>
+                    </div>
+                    <div class="account-card" onclick="switchTabPanel('holdings')">
+                        <div class="account-icon cmb">🌟</div>
+                        <div class="account-name">招行</div>
+                        <div class="account-value" id="home-zhaohang-value">¥167,760</div>
+                        <div class="account-tag">流动性的锚</div>
+                    </div>
+                </div>
 
-            <!-- Holdings List -->
-            <div class="holdings-list">
-                <div class="holding-item">
-                    <div class="holding-icon diamond">兆</div>
-                    <div class="holding-info">
-                        <div class="holding-name">
-                            兆易创新
-                            <span class="holding-tag diamond">金刚池</span>
-                            <span class="holding-tag score">92分</span>
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="quick-action-btn" onclick="switchTabPanel('holdings')">
+                        <div class="quick-action-icon blue">📈</div>
+                        <div class="quick-action-label">持仓</div>
+                    </div>
+                    <div class="quick-action-btn" onclick="switchTabPanel('trade')">
+                        <div class="quick-action-icon green">💰</div>
+                        <div class="quick-action-label">交易</div>
+                    </div>
+                    <div class="quick-action-btn" onclick="switchTabPanel('pools')">
+                        <div class="quick-action-icon purple">🚀</div>
+                        <div class="quick-action-label">五池</div>
+                    </div>
+                    <div class="quick-action-btn" onclick="switchTabPanel('settings')">
+                        <div class="quick-action-icon orange">⚙️</div>
+                        <div class="quick-action-label">设置</div>
+                    </div>
+                </div>
+
+                <!-- Risk Alert -->
+                <div class="risk-banner">
+                    <div class="risk-icon">⚠️</div>
+                    <div class="risk-text">
+                        <strong>A公子趋势投资系统</strong><br>
+                        评分≥70分持有 | 止损-6% | 移动止盈15-20%
+                    </div>
+                </div>
+
+                <!-- Market Overview -->
+                <div class="market-overview">
+                    <div class="market-title">市场行情</div>
+                    <div class="market-grid">
+                        <div class="market-item">
+                            <div class="market-name">上证指数</div>
+                            <div class="market-value" id="sh-index">3,245.67</div>
+                            <div class="market-change" id="sh-change" style="color: var(--finance-up);">+0.85%</div>
                         </div>
-                        <div class="holding-code">603986 · 300股</div>
-                    </div>
-                    <div class="holding-value">
-                        <div class="holding-pnl up">+\u00A534,530</div>
-                        <div class="holding-pnl-pct up">+32.55%</div>
+                        <div class="market-item">
+                            <div class="market-name">深证成指</div>
+                            <div class="market-value" id="sz-index">10,892.34</div>
+                            <div class="market-change" id="sz-change" style="color: var(--finance-up);">+1.12%</div>
+                        </div>
+                        <div class="market-item">
+                            <div class="market-name">创业板指</div>
+                            <div class="market-value" id="cy-index">2,156.78</div>
+                            <div class="market-change" id="cy-change" style="color: var(--finance-down);">-0.23%</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="holding-item">
-                    <div class="holding-icon module">科</div>
-                    <div class="holding-info">
-                        <div class="holding-name">
-                            科创芯片ETF
-                            <span class="holding-tag score">95分</span>
-                        </div>
-                        <div class="holding-code">588290 · 9,000份</div>
-                    </div>
-                    <div class="holding-value">
-                        <div class="holding-pnl up">+\u00A520,925</div>
-                        <div class="holding-pnl-pct up">+187.50%</div>
-                    </div>
+                <!-- Section Header -->
+                <div class="section-header">
+                    <div class="section-title">A公子持仓 TOP 4</div>
+                    <div class="section-action" onclick="switchTabPanel('holdings')">查看全部</div>
                 </div>
 
-                <div class="holding-item">
-                    <div class="holding-icon chip">光</div>
-                    <div class="holding-info">
-                        <div class="holding-name">
-                            光迅科技
-                            <span class="holding-tag score">88分</span>
-                        </div>
-                        <div class="holding-code">002281 · 200股</div>
-                    </div>
-                    <div class="holding-value">
-                        <div class="holding-pnl up">+\u00A512,069</div>
-                        <div class="holding-pnl-pct up">+38.80%</div>
-                    </div>
+                <!-- Holdings List -->
+                <div class="holdings-list" id="home-holdings-preview">
+                    <!-- 动态生成 -->
                 </div>
 
-                <div class="holding-item">
-                    <div class="holding-icon chip">东</div>
-                    <div class="holding-info">
-                        <div class="holding-name">
-                            东山精密
-                            <span class="holding-tag diamond">金刚池</span>
-                            <span class="holding-tag score">85分</span>
-                        </div>
-                        <div class="holding-code">002384 · 200股</div>
+                <!-- Daily Checklist -->
+                <div class="checklist-section">
+                    <div class="checklist-title">☀️ 开盘前检查清单</div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox checked">✓</div>
+                        <div class="checklist-text completed">心理状态评分（当前：3分 冷静）</div>
                     </div>
-                    <div class="holding-value">
-                        <div class="holding-pnl up">+\u00A513,085</div>
-                        <div class="holding-pnl-pct up">+42.17%</div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox checked">✓</div>
+                        <div class="checklist-text completed">大盘环境判断（偏多环境）</div>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox"></div>
+                        <div class="checklist-text">持仓止损止盈位检查</div>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox"></div>
+                        <div class="checklist-text">五池候选标的筛选</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Daily Checklist -->
-            <div class="checklist-section">
-                <div class="checklist-title">&#9728; 开盘前检查清单</div>
-                <div class="checklist-item">
-                    <div class="checklist-checkbox checked">&#10003;</div>
-                    <div class="checklist-text completed">心理状态评分（当前：3分 冷静）</div>
+            <!-- ===== TAB 2: 持仓 ===== -->
+            <div id="tab-holdings" class="tab-panel">
+                <!-- A公子持仓 -->
+                <div class="section-header">
+                    <div class="section-title">A公子</div>
+                    <div class="section-action" id="agongzi-summary">6只 · ¥317,809</div>
                 </div>
-                <div class="checklist-item">
-                    <div class="checklist-checkbox checked">&#10003;</div>
-                    <div class="checklist-text completed">大盘环境判断（偏多环境）</div>
+                <div class="holdings-list" id="agongzi-holdings-list">
+                    <!-- 动态生成 -->
                 </div>
-                <div class="checklist-item">
-                    <div class="checklist-checkbox"></div>
-                    <div class="checklist-text">持仓止损止盈位检查</div>
+
+                <!-- 支付宝基金 -->
+                <div class="section-header">
+                    <div class="section-title">支付宝基金</div>
+                    <div class="section-action" id="alipay-summary">13只 · ¥889,887</div>
                 </div>
-                <div class="checklist-item">
-                    <div class="checklist-checkbox"></div>
-                    <div class="checklist-text">五池候选标的筛选</div>
+                <div class="holdings-list" id="alipay-holdings-list">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 招行 -->
+                <div class="section-header">
+                    <div class="section-title">招商银行</div>
+                    <div class="section-action" id="zhaohang-summary">¥167,760</div>
+                </div>
+                <div class="holdings-list" id="zhaohang-holdings-list">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+
+            <!-- ===== TAB 3: 交易 ===== -->
+            <div id="tab-trade" class="tab-panel">
+                <div class="section-header">
+                    <div class="section-title">交易记录</div>
+                    <div class="section-action">2025年</div>
+                </div>
+                <div class="checklist-section">
+                    <div class="checklist-title">📝 最近交易</div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox checked">✓</div>
+                        <div class="checklist-text completed">卖出 光迅科技 100股 @ ¥214.99</div>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox checked">✓</div>
+                        <div class="checklist-text completed">卖出 东山精密 100股 @ ¥207.91</div>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox checked">✓</div>
+                        <div class="checklist-text completed">卖出 永鼎股份 200股 @ ¥50.01</div>
+                    </div>
+                </div>
+                <div style="text-align: center; padding: 40px; color: var(--text-tertiary);">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
+                    <div>交易功能开发中...</div>
+                </div>
+            </div>
+
+            <!-- ===== TAB 4: 五池 ===== -->
+            <div id="tab-pools" class="tab-panel">
+                <div class="risk-banner">
+                    <div class="risk-icon">💎</div>
+                    <div class="risk-text">
+                        <strong>五池动态管理系统</strong><br>
+                        观察池→监控池→候选池→持仓池 | 金刚池→持仓池
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">观察池 (12只)</div>
+                </div>
+                <div class="market-overview">
+                    <div style="font-size: 13px; line-height: 1.8; color: var(--text-secondary);">
+                        长飞光纤 · 申菱环境 · 高澜股份 · 英维克 · 润泽科技 · 科华数据 · 中控技术 · 绿的谐波 · 联特科技 · 华工科技 · 光库科技 · 工业富联
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <div class="section-title">监控池 (8只)</div>
+                </div>
+                <div class="market-overview">
+                    <div style="font-size: 13px; line-height: 1.8; color: var(--text-secondary);">
+                        中天科技 · 亨通光电 · 浪潮信息 · 中科曙光 · 澜起科技 · 鹏鼎控股 · 沪电股份 · 胜宏科技
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <div class="section-title">候选池 (5只)</div>
+                </div>
+                <div class="market-overview">
+                    <div style="font-size: 13px; line-height: 1.8; color: var(--text-secondary);">
+                        新易盛 · 天孚通信 · 寒武纪 · 海光信息 · 长光华芯
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <div class="section-title">持仓池 (6只)</div>
+                </div>
+                <div class="holdings-list" id="pools-holdings-list">
+                    <!-- 动态生成 -->
+                </div>
+
+                <div class="risk-banner" style="border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.08);">
+                    <div class="risk-icon">👑</div>
+                    <div class="risk-text">
+                        <strong>金刚池</strong><br>
+                        核心持仓，不受自动淘汰规则影响
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB 5: 设置 ===== -->
+            <div id="tab-settings" class="tab-panel">
+                <div class="section-header">
+                    <div class="section-title">系统设置</div>
+                </div>
+                <div class="checklist-section">
+                    <div class="checklist-title">⚙️ 数据管理</div>
+                    <div class="checklist-item">
+                        <div class="checklist-text">数据更新时间：2025-05-24</div>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-text">唯一数据源：用户交易记录</div>
+                    </div>
+                </div>
+                <div class="checklist-section">
+                    <div class="checklist-title">📊 关于</div>
+                    <div class="checklist-item">
+                        <div class="checklist-text">AURORA-X Dashboard V5</div>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-text">投资驾驶舱 - 趋势投资系统</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -830,6 +933,76 @@
             return (num >= 0 ? '+' : '') + num.toFixed(2) + '%';
         }
 
+        // ===== 渲染持仓项 =====
+        function renderHoldingItem(item, type) {
+            const pnlClass = item.pnl >= 0 ? 'up' : 'down';
+            const iconText = item.name.charAt(0);
+            const qtyText = type === 'stock' ? `${item.qty}股` : `${item.qty.toFixed(0)}份`;
+            const priceText = type === 'stock' ? `现价 ${item.price}` : `净值 ${item.nav}`;
+            
+            return `
+                <div class="holding-item">
+                    <div class="holding-icon ${pnlClass}">${iconText}</div>
+                    <div class="holding-info">
+                        <div class="holding-name">
+                            ${item.name}
+                            ${item.tag ? `<span class="holding-tag">${item.tag}</span>` : ''}
+                        </div>
+                        <div class="holding-code">${item.code} · ${qtyText}</div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-pnl ${pnlClass}">${item.pnl >= 0 ? '+' : ''}${formatMoney(item.pnl)}</div>
+                        <div class="holding-pnl-pct ${pnlClass}">${formatPct(item.pnlPct)}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ===== 渲染招行持仓 =====
+        function renderZhaohangHoldings() {
+            const zhaohang = accountData.zhaohang;
+            const goldPct = zhaohang.gold_pnl / (zhaohang.gold - zhaohang.gold_pnl) * 100;
+            
+            return `
+                <div class="holding-item">
+                    <div class="holding-icon up">金</div>
+                    <div class="holding-info">
+                        <div class="holding-name">
+                            招行黄金账户
+                            <span class="holding-tag">黄金</span>
+                        </div>
+                        <div class="holding-code">持仓约47克 · 成本约818元/克</div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-pnl up">+${formatMoney(zhaohang.gold_pnl)}</div>
+                        <div class="holding-pnl-pct up">+${goldPct.toFixed(2)}%</div>
+                    </div>
+                </div>
+                <div class="holding-item">
+                    <div class="holding-icon">理</div>
+                    <div class="holding-info">
+                        <div class="holding-name">招行理财产品</div>
+                        <div class="holding-code">稳健型理财</div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-pnl">-</div>
+                        <div class="holding-price-info">${formatMoney(zhaohang.licai)}</div>
+                    </div>
+                </div>
+                <div class="holding-item">
+                    <div class="holding-icon">现</div>
+                    <div class="holding-info">
+                        <div class="holding-name">现金及固收</div>
+                        <div class="holding-code">活期+货币基金</div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-pnl">-</div>
+                        <div class="holding-price-info">${formatMoney(zhaohang.cash)}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
         // ===== 初始化数据展示 =====
         function initDashboard() {
             const summary = accountData.summary;
@@ -843,26 +1016,71 @@
             const positionRatio = (totalMarket / summary.total_assets * 100).toFixed(1);
             const pnlPct = (summary.total_pnl / (summary.total_assets - summary.total_pnl) * 100).toFixed(2);
             
-            // 更新总资产卡片
-            document.querySelector('.asset-value').textContent = formatMoney(summary.total_assets);
-            document.querySelector('.asset-change').innerHTML = `
+            // 更新首页总资产卡片
+            document.getElementById('home-total-assets').textContent = formatMoney(summary.total_assets);
+            document.getElementById('home-total-pnl').innerHTML = `
                 <span>${summary.total_pnl >= 0 ? '+' : ''}</span>
                 <span>${formatMoney(summary.total_pnl)}</span>
                 <span style="opacity: 0.8;">(${formatPct(pnlPct)})</span>
             `;
             
-            // 更新账户卡片
-            const accountCards = document.querySelectorAll('.account-card');
-            accountCards[0].querySelector('.account-value').textContent = formatMoney(agongzi.total);
-            accountCards[1].querySelector('.account-value').textContent = formatMoney(alipay.total);
-            accountCards[2].querySelector('.account-value').textContent = formatMoney(zhaohang.total);
+            // 更新首页账户卡片
+            document.getElementById('home-agongzi-value').textContent = formatMoney(agongzi.total);
+            document.getElementById('home-alipay-value').textContent = formatMoney(alipay.total);
+            document.getElementById('home-zhaohang-value').textContent = formatMoney(zhaohang.total);
+            
+            // 渲染首页持仓预览 (按盈亏排序取前4)
+            const topHoldings = [...agongzi.stocks].sort((a, b) => b.pnl - a.pnl).slice(0, 4);
+            document.getElementById('home-holdings-preview').innerHTML = topHoldings.map(s => renderHoldingItem(s, 'stock')).join('');
+            
+            // 渲染持仓Tab - A公子
+            document.getElementById('agongzi-summary').textContent = `${agongzi.stocks.length}只 · ${formatMoney(agongzi.market)}`;
+            document.getElementById('agongzi-holdings-list').innerHTML = agongzi.stocks.map(s => renderHoldingItem(s, 'stock')).join('');
+            
+            // 渲染持仓Tab - 支付宝基金 (按盈亏排序)
+            const sortedFunds = [...alipay.funds].sort((a, b) => b.pnl - a.pnl);
+            document.getElementById('alipay-summary').textContent = `${alipay.funds.length}只 · ${formatMoney(alipay.market)}`;
+            document.getElementById('alipay-holdings-list').innerHTML = sortedFunds.map(f => renderHoldingItem(f, 'fund')).join('');
+            
+            // 渲染持仓Tab - 招行
+            document.getElementById('zhaohang-summary').textContent = formatMoney(zhaohang.total);
+            document.getElementById('zhaohang-holdings-list').innerHTML = renderZhaohangHoldings();
+            
+            // 渲染五池Tab - 持仓池
+            document.getElementById('pools-holdings-list').innerHTML = agongzi.stocks.map(s => renderHoldingItem(s, 'stock')).join('');
         }
 
-        // Tab switching
-        document.querySelectorAll('.tab-item').forEach(tab => {
+        // Tab switching function
+        function switchTabPanel(tabName) {
+            // Hide all tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            
+            // Show selected tab panel
+            const targetPanel = document.getElementById('tab-' + tabName);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+            
+            // Update tab bar active state
+            document.querySelectorAll('.tab-item').forEach((tab, index) => {
+                tab.classList.remove('active');
+                const tabLabels = ['home', 'holdings', 'trade', 'pools', 'settings'];
+                if (tabLabels[index] === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Tab bar click handlers
+        document.querySelectorAll('.tab-item').forEach((tab, index) => {
             tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+                const tabLabels = ['home', 'holdings', 'trade', 'pools', 'settings'];
+                switchTabPanel(tabLabels[index]);
             });
         });
 
