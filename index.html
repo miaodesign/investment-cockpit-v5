@@ -2,1132 +2,604 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#F2F2F7">
-    <title>AURORA-X Dashboard</title>
-    <link rel="stylesheet" href="design-system.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>投资驾驶舱</title>
     <style>
-        /* AURORA-X Dashboard Specific Styles */
-        
-        /* Dashboard Header */
-        .dashboard-header {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 0.5px solid var(--ios-gray5);
-            padding: 12px 16px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .dashboard-header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .dashboard-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .dashboard-subtitle {
-            font-size: 11px;
-            color: var(--text-tertiary);
-            margin-top: 2px;
-        }
-        
-        /* Total Asset Card */
-        .asset-card {
-            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
-            border-radius: 16px;
-            padding: 20px;
-            margin: 16px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .asset-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        
-        .asset-label {
-            font-size: 13px;
-            opacity: 0.9;
-            margin-bottom: 4px;
-        }
-        
-        .asset-value {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-        }
-        
-        .asset-change {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            background: rgba(255,255,255,0.2);
-            padding: 4px 10px;
-            border-radius: 12px;
-        }
-        
-        /* Account Cards Grid */
-        .accounts-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            padding: 0 16px;
-            margin-bottom: 24px;
-        }
-        
-        .account-card {
-            background: var(--ios-bg-secondary);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            box-shadow: 0 0.5px 2px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease;
-        }
-        
-        .account-card:active {
-            transform: scale(0.98);
-        }
-        
-        .account-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 8px;
-            font-size: 18px;
-        }
-        
-        .account-icon.a-gongzi {
-            background: linear-gradient(135deg, #FF3B30 0%, #FF6B6B 100%);
-        }
-        
-        .account-icon.alipay {
-            background: linear-gradient(135deg, #1677FF 0%, #36A8FF 100%);
-        }
-        
-        .account-icon.cmb {
-            background: linear-gradient(135deg, #E60012 0%, #FF4757 100%);
-        }
-        
-        .account-name {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-        
-        .account-value {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .account-tag {
-            font-size: 9px;
-            color: var(--text-tertiary);
-            margin-top: 4px;
-        }
-        
-        /* Section Header */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 16px 8px;
-        }
-        
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .section-action {
-            font-size: 14px;
-            color: var(--ios-blue);
-            font-weight: 500;
-        }
-        
-        /* Holdings List */
-        .holdings-list {
-            background: var(--ios-bg-secondary);
-            margin: 0 16px;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        .holding-item {
-            display: flex;
-            align-items: center;
-            padding: 14px 16px;
-            border-bottom: 0.5px solid var(--ios-gray5);
-            transition: background-color 0.15s ease;
-        }
-        
-        .holding-item:last-child {
-            border-bottom: none;
-        }
-        
-        .holding-item:active {
-            background-color: var(--ios-gray6);
-        }
-        
-        .holding-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            flex-shrink: 0;
-        }
-        
-        .holding-icon.diamond {
-            background: linear-gradient(135deg, #AF52DE 0%, #C77DFF 100%);
-        }
-        
-        .holding-icon.chip {
-            background: linear-gradient(135deg, #FF3B30 0%, #FF6B6B 100%);
-        }
-        
-        .holding-icon.module {
-            background: linear-gradient(135deg, #34C759 0%, #5CDD7A 100%);
-        }
-        
-        .holding-icon.etf {
-            background: linear-gradient(135deg, #FF9500 0%, #FFBB33 100%);
-        }
-        
-        .holding-info {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .holding-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .holding-tag {
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        
-        .holding-tag.diamond {
-            background: rgba(175, 82, 222, 0.15);
-            color: #AF52DE;
-        }
-        
-        .holding-tag.score {
-            background: rgba(255, 59, 48, 0.15);
-            color: #FF3B30;
-        }
-        
-        .holding-code {
-            font-size: 12px;
-            color: var(--text-tertiary);
-        }
-        
-        .holding-value {
-            text-align: right;
-            flex-shrink: 0;
-        }
-        
-        .holding-pnl {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-        
-        .holding-pnl.up {
-            color: var(--finance-up);
-        }
-        
-        .holding-pnl.down {
-            color: var(--finance-down);
-        }
-        
-        .holding-pnl-pct {
-            font-size: 12px;
-            font-weight: 500;
-        }
-        
-        .holding-pnl-pct.up {
-            color: var(--finance-up);
-        }
-        
-        .holding-pnl-pct.down {
-            color: var(--finance-down);
-        }
-        
-        .holding-icon.up {
-            background: rgba(255, 59, 48, 0.15);
-            color: #FF3B30;
-        }
-        
-        .holding-icon.down {
-            background: rgba(52, 199, 89, 0.15);
-            color: #34C759;
-        }
-        
-        /* Quick Actions */
-        .quick-actions {
-            display: flex;
-            gap: 12px;
-            padding: 16px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        
-        .quick-actions::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .quick-action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            padding: 12px 20px;
-            background: var(--ios-bg-secondary);
-            border-radius: 12px;
-            min-width: 72px;
-            transition: transform 0.15s ease;
-        }
-        
-        .quick-action-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .quick-action-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-        
-        .quick-action-icon.blue {
-            background: rgba(0, 122, 255, 0.15);
-        }
-        
-        .quick-action-icon.green {
-            background: rgba(52, 199, 89, 0.15);
-        }
-        
-        .quick-action-icon.orange {
-            background: rgba(255, 149, 0, 0.15);
-        }
-        
-        .quick-action-icon.purple {
-            background: rgba(175, 82, 222, 0.15);
-        }
-        
-        .quick-action-label {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-        
-        /* Market Overview */
-        .market-overview {
-            background: var(--ios-bg-secondary);
-            margin: 0 16px 16px;
-            border-radius: 12px;
-            padding: 16px;
-        }
-        
-        .market-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-        
-        .market-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-        
-        .market-item {
-            text-align: center;
-        }
-        
-        .market-name {
-            font-size: 12px;
-            color: var(--text-tertiary);
-            margin-bottom: 4px;
-        }
-        
-        .market-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .market-change {
-            font-size: 11px;
-            font-weight: 500;
-            margin-top: 2px;
-        }
-        
-        /* Tab Bar */
-        .tab-bar {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 0.5px solid var(--ios-gray5);
-            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
-            z-index: 100;
-        }
-        
-        .tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 16px;
-            color: var(--ios-gray);
-            transition: color 0.2s ease;
-        }
-        
-        .tab-item.active {
-            color: var(--ios-blue);
-        }
-        
-        .tab-icon {
-            font-size: 22px;
-            line-height: 1;
-        }
-        
-        .tab-label {
-            font-size: 10px;
-            font-weight: 500;
-        }
-        
-        /* Content Spacing for Tab Bar */
-        .content {
-            padding-bottom: 80px;
-        }
-        
-        /* Tab Panel Styles */
-        .tab-panel {
-            display: none;
-        }
-        
-        .tab-panel.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Risk Alert Banner */
-        .risk-banner {
-            background: rgba(255, 59, 48, 0.08);
-            border-left: 3px solid var(--ios-red);
-            padding: 12px 16px;
-            margin: 0 16px 16px;
-            border-radius: 0 8px 8px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .risk-icon {
-            font-size: 18px;
-        }
-        
-        .risk-text {
-            font-size: 13px;
-            color: var(--text-primary);
-            line-height: 1.4;
-        }
-        
-        /* Checklist Section */
-        .checklist-section {
-            background: var(--ios-bg-secondary);
-            margin: 0 16px 16px;
-            border-radius: 12px;
-            padding: 16px;
-        }
-        
-        .checklist-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-        
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 0.5px solid var(--ios-gray5);
-        }
-        
-        .checklist-item:last-child {
-            border-bottom: none;
-        }
-        
-        .checklist-checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--ios-gray4);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-        }
-        
-        .checklist-checkbox.checked {
-            background: var(--ios-blue);
-            border-color: var(--ios-blue);
-        }
-        
-        .checklist-text {
-            font-size: 14px;
-            color: var(--text-primary);
-            flex: 1;
-        }
-        
-        .checklist-text.completed {
-            color: var(--text-tertiary);
-            text-decoration: line-through;
-        }
-        
-        /* Responsive Adjustments */
-        @media (min-width: 768px) {
-            .accounts-grid {
-                grid-template-columns: repeat(3, 1fr);
-                max-width: 600px;
-                margin: 0 auto 24px;
-            }
-            
-            .holdings-list {
-                max-width: 600px;
-                margin: 0 auto;
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .dashboard-container {
-                max-width: 1024px;
-                margin: 0 auto;
-            }
-            
-            .accounts-grid {
-                max-width: 700px;
-            }
-            
-            .holdings-list {
-                max-width: 700px;
-            }
-        }
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a2234;
+            --border: #2a3a5a;
+            --text-primary: #f0f4f8;
+            --text-secondary: #8892a4;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --up: #ef4444;
+            --down: #22c55e;
+            --warning: #f59e0b;
+            --gold: #fbbf24;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+        /* ===== Header ===== */
+        .header { background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%); padding: 20px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
+        .header-content { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, var(--accent-light), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header .subtitle { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+        .header-right { text-align: right; }
+        .update-time { font-size: 11px; color: var(--text-secondary); }
+        .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--down); margin-right: 4px; }
+
+        /* ===== Container ===== */
+        .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+
+        /* ===== Overview Grid ===== */
+        .overview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .metric-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; text-align: center; transition: transform 0.2s; }
+        .metric-card:active { transform: scale(0.97); }
+        .metric-label { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.5px; margin-bottom: 6px; }
+        .metric-value { font-size: 22px; font-weight: 700; }
+        .metric-value.up { color: var(--up); }
+        .metric-value.down { color: var(--down); }
+        .metric-sub { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+
+        /* ===== Tabs ===== */
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; background: var(--bg-card); padding: 4px; border-radius: 12px; border: 1px solid var(--border); }
+        .tab { flex: 1; padding: 10px 8px; text-align: center; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; border: none; background: none; border-radius: 8px; transition: all 0.25s ease; -webkit-tap-highlight-color: transparent; }
+        .tab.active { background: var(--accent); color: white; box-shadow: 0 2px 12px rgba(99, 102, 241, 0.4); }
+        .tab:active:not(.active) { background: rgba(99, 102, 241, 0.15); }
+
+        /* ===== Tab Content ===== */
+        .tab-content { display: none; animation: fadeSlideIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== Card ===== */
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .card-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px; }
+        .card-badge { background: var(--accent); color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .card-badge.up { background: rgba(34, 197, 94, 0.2); color: var(--down); }
+        .card-badge.down { background: rgba(239, 68, 68, 0.2); color: var(--up); }
+
+        /* ===== Account Header ===== */
+        .account-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(167,139,250,0.06)); border-radius: 12px; margin-bottom: 14px; border: 1px solid rgba(99,102,241,0.2); }
+        .account-name { font-weight: 700; font-size: 16px; }
+        .account-desc { font-size: 11px; color: var(--accent-light); margin-top: 2px; }
+        .account-stats { display: flex; gap: 16px; text-align: right; }
+        .account-stat-value { font-weight: 700; font-size: 15px; }
+        .account-stat-label { font-size: 10px; color: var(--text-secondary); }
+
+        /* ===== Holding Item ===== */
+        .holding-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--bg-secondary); border-radius: 10px; margin-bottom: 8px; transition: transform 0.15s; -webkit-tap-highlight-color: transparent; }
+        .holding-item:active { transform: scale(0.98); background: rgba(99, 102, 241, 0.08); }
+        .holding-left { flex: 1; min-width: 0; }
+        .holding-top { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+        .holding-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .holding-tag { background: rgba(99,102,241,0.2); color: var(--accent-light); padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+        .holding-tag.gold { background: rgba(251,191,36,0.15); color: var(--gold); }
+        .holding-tag.red { background: rgba(239,68,68,0.15); color: var(--up); }
+        .holding-tag.green { background: rgba(34,197,94,0.15); color: var(--down); }
+        .holding-code { font-size: 11px; color: var(--text-secondary); }
+        .holding-right { text-align: right; flex-shrink: 0; margin-left: 12px; }
+        .holding-pnl { font-weight: 700; font-size: 14px; }
+        .holding-pnl.up { color: var(--up); }
+        .holding-pnl.down { color: var(--down); }
+        .holding-price { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* ===== Decision Card ===== */
+        .decision-card { background: var(--bg-secondary); border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 3px solid var(--accent); }
+        .decision-priority { font-size: 10px; color: var(--accent); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
+        .decision-action { font-weight: 600; font-size: 14px; }
+        .decision-reason { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+        /* ===== Environment Card ===== */
+        .env-card { background: var(--bg-secondary); border-radius: 12px; padding: 16px; display: flex; justify-content: space-around; }
+        .env-item { text-align: center; }
+        .env-value { font-size: 20px; font-weight: 700; color: var(--accent); }
+        .env-label { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* ===== Progress Bar ===== */
+        .progress-bar { height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+        .progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+
+        /* ===== Pool Tags ===== */
+        .pool-section { margin-bottom: 16px; }
+        .pool-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .pool-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+        .pool-icon.observe { background: rgba(99,102,241,0.15); color: var(--accent-light); }
+        .pool-icon.monitor { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .pool-icon.candidate { background: rgba(34,197,94,0.15); color: var(--down); }
+        .pool-icon.holding { background: rgba(239,68,68,0.15); color: var(--up); }
+        .pool-icon.diamond { background: rgba(251,191,36,0.15); color: var(--gold); }
+        .pool-title { font-size: 13px; font-weight: 600; }
+        .pool-count { font-size: 11px; color: var(--text-secondary); margin-left: auto; }
+        .pool-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .pool-tag { background: var(--bg-secondary); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; font-size: 12px; color: var(--text-primary); transition: all 0.2s; }
+        .pool-tag:active { background: rgba(99,102,241,0.1); border-color: var(--accent); }
+
+        /* ===== Flow Arrow ===== */
+        .flow-arrow { text-align: center; color: var(--text-secondary); font-size: 18px; margin: 12px 0; opacity: 0.5; }
+
+        /* ===== KPI Grid ===== */
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .kpi-card { background: var(--bg-secondary); border-radius: 10px; padding: 14px; text-align: center; }
+        .kpi-value { font-size: 20px; font-weight: 700; }
+        .kpi-value.green { color: var(--down); }
+        .kpi-value.red { color: var(--up); }
+        .kpi-label { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+
+        /* ===== Risk Banner ===== */
+        .risk-banner { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
+        .risk-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+        .risk-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+        .risk-text strong { color: var(--text-primary); }
+
+        /* ===== Footer ===== */
+        .footer { text-align: center; color: var(--text-secondary); font-size: 10px; margin-top: 20px; padding-bottom: 40px; opacity: 0.6; }
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- Header -->
-        <header class="dashboard-header">
-            <div class="dashboard-header-content">
-                <div>
-                    <div class="dashboard-title">AURORA-X</div>
-                    <div class="dashboard-subtitle">投资驾驶舱</div>
-                </div>
-                <div style="font-size: 20px;">&#128269;</div>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>投资驾驶舱</h1>
+                <div class="subtitle">A公子 · 趋势投资系统</div>
             </div>
-        </header>
+            <div class="header-right">
+                <div class="update-time"><span class="status-dot"></span><span id="updateTime">--</span></div>
+            </div>
+        </div>
+    </div>
 
-        <div class="content">
-            <!-- ===== TAB 1: 首页 ===== -->
-            <div id="tab-home" class="tab-panel active">
-                <!-- Total Asset Card -->
-                <div class="asset-card">
-                    <div class="asset-label">总资产</div>
-                    <div class="asset-value" id="home-total-assets">¥1,630,345</div>
-                    <div class="asset-change" id="home-total-pnl">
-                        <span>+</span>
-                        <span>¥313,369</span>
-                        <span style="opacity: 0.8;">(+23.79%)</span>
-                    </div>
+    <div class="container">
+        <!-- ===== Overview ===== -->
+        <div class="overview-grid">
+            <div class="metric-card">
+                <div class="metric-label">总资产</div>
+                <div class="metric-value" id="totalAssets">--</div>
+                <div class="metric-sub">3个账户汇总</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">总盈亏</div>
+                <div class="metric-value" id="totalPnl">--</div>
+                <div class="metric-sub" id="totalPnlPct">--</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">可用余额</div>
+                <div class="metric-value" id="totalCash">--</div>
+                <div class="metric-sub">可投入资金</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">仓位</div>
+                <div class="metric-value" id="position">--</div>
+                <div class="metric-sub" id="marketValue">--</div>
+            </div>
+        </div>
+
+        <!-- ===== Tabs ===== -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('portfolio', this)">持仓</button>
+            <button class="tab" onclick="switchTab('decision', this)">决策</button>
+            <button class="tab" onclick="switchTab('analysis', this)">分析</button>
+            <button class="tab" onclick="switchTab('pools', this)">五池</button>
+        </div>
+
+        <!-- ===== TAB: 持仓 ===== -->
+        <div id="tab-portfolio" class="tab-content active">
+            <div id="portfolioContent"></div>
+        </div>
+
+        <!-- ===== TAB: 决策 ===== -->
+        <div id="tab-decision" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">市场环境</span>
+                    <span class="card-badge">震荡偏多</span>
                 </div>
-
-                <!-- Account Cards -->
-                <div class="accounts-grid">
-                    <div class="account-card" onclick="switchTabPanel('holdings')">
-                        <div class="account-icon a-gongzi">📈</div>
-                        <div class="account-name">A公子</div>
-                        <div class="account-value" id="home-agongzi-value">¥550,283</div>
-                        <div class="account-tag">趋势的矛</div>
-                    </div>
-                    <div class="account-card" onclick="switchTabPanel('holdings')">
-                        <div class="account-icon alipay">💰</div>
-                        <div class="account-name">支付宝</div>
-                        <div class="account-value" id="home-alipay-value">¥912,303</div>
-                        <div class="account-tag">配置的盾</div>
-                    </div>
-                    <div class="account-card" onclick="switchTabPanel('holdings')">
-                        <div class="account-icon cmb">🌟</div>
-                        <div class="account-name">招行</div>
-                        <div class="account-value" id="home-zhaohang-value">¥167,760</div>
-                        <div class="account-tag">流动性的锚</div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <div class="quick-action-btn" onclick="switchTabPanel('holdings')">
-                        <div class="quick-action-icon blue">📈</div>
-                        <div class="quick-action-label">持仓</div>
-                    </div>
-                    <div class="quick-action-btn" onclick="switchTabPanel('trade')">
-                        <div class="quick-action-icon green">💰</div>
-                        <div class="quick-action-label">交易</div>
-                    </div>
-                    <div class="quick-action-btn" onclick="switchTabPanel('pools')">
-                        <div class="quick-action-icon purple">🚀</div>
-                        <div class="quick-action-label">五池</div>
-                    </div>
-                    <div class="quick-action-btn" onclick="switchTabPanel('settings')">
-                        <div class="quick-action-icon orange">⚙️</div>
-                        <div class="quick-action-label">设置</div>
-                    </div>
-                </div>
-
-                <!-- Risk Alert -->
-                <div class="risk-banner">
-                    <div class="risk-icon">⚠️</div>
-                    <div class="risk-text">
-                        <strong>A公子趋势投资系统</strong><br>
-                        评分≥70分持有 | 止损-6% | 移动止盈15-20%
-                    </div>
-                </div>
-
-                <!-- Market Overview -->
-                <div class="market-overview">
-                    <div class="market-title">市场行情</div>
-                    <div class="market-grid">
-                        <div class="market-item">
-                            <div class="market-name">上证指数</div>
-                            <div class="market-value" id="sh-index">3,245.67</div>
-                            <div class="market-change" id="sh-change" style="color: var(--finance-up);">+0.85%</div>
-                        </div>
-                        <div class="market-item">
-                            <div class="market-name">深证成指</div>
-                            <div class="market-value" id="sz-index">10,892.34</div>
-                            <div class="market-change" id="sz-change" style="color: var(--finance-up);">+1.12%</div>
-                        </div>
-                        <div class="market-item">
-                            <div class="market-name">创业板指</div>
-                            <div class="market-value" id="cy-index">2,156.78</div>
-                            <div class="market-change" id="cy-change" style="color: var(--finance-down);">-0.23%</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section Header -->
-                <div class="section-header">
-                    <div class="section-title">A公子持仓 TOP 4</div>
-                    <div class="section-action" onclick="switchTabPanel('holdings')">查看全部</div>
-                </div>
-
-                <!-- Holdings List -->
-                <div class="holdings-list" id="home-holdings-preview">
-                    <!-- 动态生成 -->
-                </div>
-
-                <!-- Daily Checklist -->
-                <div class="checklist-section">
-                    <div class="checklist-title">☀️ 开盘前检查清单</div>
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox checked">✓</div>
-                        <div class="checklist-text completed">心理状态评分（当前：3分 冷静）</div>
-                    </div>
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox checked">✓</div>
-                        <div class="checklist-text completed">大盘环境判断（偏多环境）</div>
-                    </div>
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox"></div>
-                        <div class="checklist-text">持仓止损止盈位检查</div>
-                    </div>
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox"></div>
-                        <div class="checklist-text">五池候选标的筛选</div>
-                    </div>
+                <div class="env-card">
+                    <div class="env-item"><div class="env-value">65</div><div class="env-label">市场评分</div></div>
+                    <div class="env-item"><div class="env-value">80%</div><div class="env-label">仓位上限</div></div>
+                    <div class="env-item"><div class="env-value">谨慎乐观</div><div class="env-label">市场信号</div></div>
                 </div>
             </div>
-
-            <!-- ===== TAB 2: 持仓 ===== -->
-            <div id="tab-holdings" class="tab-panel">
-                <!-- A公子持仓 -->
-                <div class="section-header">
-                    <div class="section-title">A公子</div>
-                    <div class="section-action" id="agongzi-summary">6只 · ¥317,809</div>
+            <div class="card">
+                <div class="card-header"><span class="card-title">操作建议</span></div>
+                <div class="decision-card">
+                    <div class="decision-priority">优先级 高</div>
+                    <div class="decision-action">关注候选池标的买入时机</div>
+                    <div class="decision-reason">市场震荡偏多，等待回调至支撑位附近分批建仓</div>
                 </div>
-                <div class="holdings-list" id="agongzi-holdings-list">
-                    <!-- 动态生成 -->
+                <div class="decision-card">
+                    <div class="decision-priority">优先级 中</div>
+                    <div class="decision-action">科创芯片ETF持有待涨</div>
+                    <div class="decision-reason">半导体板块趋势强劲，+187%盈利继续持有</div>
                 </div>
-
-                <!-- 支付宝基金 -->
-                <div class="section-header">
-                    <div class="section-title">支付宝基金</div>
-                    <div class="section-action" id="alipay-summary">13只 · ¥889,887</div>
-                </div>
-                <div class="holdings-list" id="alipay-holdings-list">
-                    <!-- 动态生成 -->
-                </div>
-
-                <!-- 招行 -->
-                <div class="section-header">
-                    <div class="section-title">招商银行</div>
-                    <div class="section-action" id="zhaohang-summary">¥167,760</div>
-                </div>
-                <div class="holdings-list" id="zhaohang-holdings-list">
-                    <!-- 动态生成 -->
+                <div class="decision-card">
+                    <div class="decision-priority">优先级 低</div>
+                    <div class="decision-action">东材科技设止损观察</div>
+                    <div class="decision-reason">成本线附近震荡，跌破52元考虑止损</div>
                 </div>
             </div>
-
-            <!-- ===== TAB 3: 交易 ===== -->
-            <div id="tab-trade" class="tab-panel">
-                <div class="section-header">
-                    <div class="section-title">交易记录</div>
-                    <div class="section-action">2025年</div>
-                </div>
-                <div class="checklist-section">
-                    <div class="checklist-title">📝 最近交易</div>
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox checked">✓</div>
-                        <div class="checklist-text completed">卖出 光迅科技 100股 @ ¥214.99</div>
-                    </div>
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox checked">✓</div>
-                        <div class="checklist-text completed">卖出 东山精密 100股 @ ¥207.91</div>
-                    </div>
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox checked">✓</div>
-                        <div class="checklist-text completed">卖出 永鼎股份 200股 @ ¥50.01</div>
-                    </div>
-                </div>
-                <div style="text-align: center; padding: 40px; color: var(--text-tertiary);">
-                    <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
-                    <div>交易功能开发中...</div>
-                </div>
-            </div>
-
-            <!-- ===== TAB 4: 五池 ===== -->
-            <div id="tab-pools" class="tab-panel">
-                <div class="risk-banner">
-                    <div class="risk-icon">💎</div>
-                    <div class="risk-text">
-                        <strong>五池动态管理系统</strong><br>
-                        观察池→监控池→候选池→持仓池 | 金刚池→持仓池
-                    </div>
-                </div>
-                
-                <div class="section-header">
-                    <div class="section-title">观察池 (12只)</div>
-                </div>
-                <div class="market-overview">
-                    <div style="font-size: 13px; line-height: 1.8; color: var(--text-secondary);">
-                        长飞光纤 · 申菱环境 · 高澜股份 · 英维克 · 润泽科技 · 科华数据 · 中控技术 · 绿的谐波 · 联特科技 · 华工科技 · 光库科技 · 工业富联
-                    </div>
-                </div>
-
-                <div class="section-header">
-                    <div class="section-title">监控池 (8只)</div>
-                </div>
-                <div class="market-overview">
-                    <div style="font-size: 13px; line-height: 1.8; color: var(--text-secondary);">
-                        中天科技 · 亨通光电 · 浪潮信息 · 中科曙光 · 澜起科技 · 鹏鼎控股 · 沪电股份 · 胜宏科技
-                    </div>
-                </div>
-
-                <div class="section-header">
-                    <div class="section-title">候选池 (5只)</div>
-                </div>
-                <div class="market-overview">
-                    <div style="font-size: 13px; line-height: 1.8; color: var(--text-secondary);">
-                        新易盛 · 天孚通信 · 寒武纪 · 海光信息 · 长光华芯
-                    </div>
-                </div>
-
-                <div class="section-header">
-                    <div class="section-title">持仓池 (6只)</div>
-                </div>
-                <div class="holdings-list" id="pools-holdings-list">
-                    <!-- 动态生成 -->
-                </div>
-
-                <div class="risk-banner" style="border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.08);">
-                    <div class="risk-icon">👑</div>
-                    <div class="risk-text">
-                        <strong>金刚池</strong><br>
-                        核心持仓，不受自动淘汰规则影响
-                    </div>
-                </div>
-            </div>
-
-            <!-- ===== TAB 5: 设置 ===== -->
-            <div id="tab-settings" class="tab-panel">
-                <div class="section-header">
-                    <div class="section-title">系统设置</div>
-                </div>
-                <div class="checklist-section">
-                    <div class="checklist-title">⚙️ 数据管理</div>
-                    <div class="checklist-item">
-                        <div class="checklist-text">数据更新时间：2025-05-24</div>
-                    </div>
-                    <div class="checklist-item">
-                        <div class="checklist-text">唯一数据源：用户交易记录</div>
-                    </div>
-                </div>
-                <div class="checklist-section">
-                    <div class="checklist-title">📊 关于</div>
-                    <div class="checklist-item">
-                        <div class="checklist-text">AURORA-X Dashboard V5</div>
-                    </div>
-                    <div class="checklist-item">
-                        <div class="checklist-text">投资驾驶舱 - 趋势投资系统</div>
-                    </div>
+            <div class="risk-banner">
+                <div class="risk-icon">⚠️</div>
+                <div class="risk-text">
+                    <strong>交易纪律提醒</strong><br>
+                    止损-8%严格执行 · 移动止盈15-20%分批减仓 · 评分&lt;70分淘汰
                 </div>
             </div>
         </div>
 
-        <!-- Tab Bar -->
-        <nav class="tab-bar">
-            <div class="tab-item active">
-                <div class="tab-icon">&#127968;</div>
-                <div class="tab-label">首页</div>
+        <!-- ===== TAB: 分析 ===== -->
+        <div id="tab-analysis" class="tab-content">
+            <div class="card">
+                <div class="card-header"><span class="card-title">关键指标</span></div>
+                <div class="kpi-grid">
+                    <div class="kpi-card"><div class="kpi-value green">68.5%</div><div class="kpi-label">胜率</div></div>
+                    <div class="kpi-card"><div class="kpi-value green">2.35</div><div class="kpi-label">盈亏比</div></div>
+                    <div class="kpi-card"><div class="kpi-value red">-12.8%</div><div class="kpi-label">最大回撤</div></div>
+                    <div class="kpi-card"><div class="kpi-value green">1.85</div><div class="kpi-label">夏普比率</div></div>
+                </div>
             </div>
-            <div class="tab-item">
-                <div class="tab-icon">&#128200;</div>
-                <div class="tab-label">持仓</div>
+            <div class="card">
+                <div class="card-header"><span class="card-title">风险预算</span></div>
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>风险使用</span><span style="color:var(--warning)">72%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:72%;background:var(--warning)"></div></div>
+                </div>
+                <div style="display:flex;justify-content:space-around;font-size:11px;color:var(--text-secondary);">
+                    <span>股票: 72%</span><span>基金: 20%</span><span>现金: 8%</span>
+                </div>
             </div>
-            <div class="tab-item">
-                <div class="tab-icon">&#128176;</div>
-                <div class="tab-label">交易</div>
+            <div class="card">
+                <div class="card-header"><span class="card-title">市场维度</span></div>
+                <div style="margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>趋势</span><span style="color:var(--accent-light)">上升趋势 (70)</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:70%;background:var(--down)"></div></div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>资金</span><span style="color:var(--accent-light)">资金流入 (60)</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:60%;background:var(--warning)"></div></div>
+                </div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>情绪</span><span style="color:var(--accent-light)">情绪中性 (65)</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:65%;background:var(--warning)"></div></div>
+                </div>
             </div>
-            <div class="tab-item">
-                <div class="tab-icon">&#128640;</div>
-                <div class="tab-label">五池</div>
+        </div>
+
+        <!-- ===== TAB: 五池 ===== -->
+        <div id="tab-pools" class="tab-content">
+            <div class="risk-banner">
+                <div class="risk-icon">💎</div>
+                <div class="risk-text">
+                    <strong>五池动态管理系统</strong><br>
+                    观察池 → 监控池 → 候选池 → 持仓池 &nbsp;|&nbsp; 金刚池 → 持仓池<br>
+                    淘汰规则：止损-8% · 止盈+30% · 趋势走坏 · 评分&lt;70
+                </div>
             </div>
-            <div class="tab-item">
-                <div class="tab-icon">&#9881;</div>
-                <div class="tab-label">设置</div>
+
+            <!-- 观察池 -->
+            <div class="pool-section">
+                <div class="pool-header">
+                    <div class="pool-icon observe">👁</div>
+                    <span class="pool-title">观察池</span>
+                    <span class="pool-count">12只</span>
+                </div>
+                <div class="pool-tags">
+                    <span class="pool-tag">长飞光纤</span><span class="pool-tag">申菱环境</span><span class="pool-tag">高澜股份</span>
+                    <span class="pool-tag">英维克</span><span class="pool-tag">润泽科技</span><span class="pool-tag">科华数据</span>
+                    <span class="pool-tag">中控技术</span><span class="pool-tag">绿的谐波</span><span class="pool-tag">联特科技</span>
+                    <span class="pool-tag">华工科技</span><span class="pool-tag">光库科技</span><span class="pool-tag">工业富联</span>
+                </div>
             </div>
-        </nav>
+            <div class="flow-arrow">↓</div>
+
+            <!-- 监控池 -->
+            <div class="pool-section">
+                <div class="pool-header">
+                    <div class="pool-icon monitor">📡</div>
+                    <span class="pool-title">监控池</span>
+                    <span class="pool-count">8只</span>
+                </div>
+                <div class="pool-tags">
+                    <span class="pool-tag">中天科技</span><span class="pool-tag">亨通光电</span><span class="pool-tag">浪潮信息</span>
+                    <span class="pool-tag">中科曙光</span><span class="pool-tag">澜起科技</span><span class="pool-tag">鹏鼎控股</span>
+                    <span class="pool-tag">沪电股份</span><span class="pool-tag">胜宏科技</span>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+
+            <!-- 候选池 -->
+            <div class="pool-section">
+                <div class="pool-header">
+                    <div class="pool-icon candidate">🎯</div>
+                    <span class="pool-title">候选池</span>
+                    <span class="pool-count">5只</span>
+                </div>
+                <div class="pool-tags">
+                    <span class="pool-tag">新易盛</span><span class="pool-tag">天孚通信</span><span class="pool-tag">寒武纪</span>
+                    <span class="pool-tag">海光信息</span><span class="pool-tag">长光华芯</span>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+
+            <!-- 持仓池 -->
+            <div class="pool-section">
+                <div class="pool-header">
+                    <div class="pool-icon holding">📊</div>
+                    <span class="pool-title">持仓池</span>
+                    <span class="pool-count" id="poolHoldingCount">6只</span>
+                </div>
+                <div id="poolHoldingsList"></div>
+            </div>
+
+            <div class="flow-arrow" style="margin: 16px 0;">───────</div>
+
+            <!-- 金刚池 -->
+            <div class="pool-section">
+                <div class="pool-header">
+                    <div class="pool-icon diamond">👑</div>
+                    <span class="pool-title">金刚池</span>
+                    <span class="pool-count">核心持仓 · 不受淘汰规则影响</span>
+                </div>
+                <div class="risk-banner" style="margin-bottom:0;">
+                    <div class="risk-icon">🔒</div>
+                    <div class="risk-text">金刚池为手动管理，核心持仓不受自动淘汰规则影响。当前金刚池为空，可从持仓池中标记。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer" id="footerText">投资驾驶舱 · 数据仅供参考</div>
     </div>
 
     <script>
-        // ===== 真实账户数据 =====
-        const accountData = {
-            "agongzi": {
-                "stocks": [
-                    {"name": "兆易创新", "code": "603986.SH", "qty": 300, "cost": 353.639, "price": 468.74, "tag": "芯片", "market": 140622.0, "pnl": 34530.3, "pnlPct": 32.55},
-                    {"name": "光迅科技", "code": "002281.SZ", "qty": 200, "cost": 155.526, "price": 215.87, "tag": "光模块", "market": 43174.0, "pnl": 12068.8, "pnlPct": 38.80},
-                    {"name": "东山精密", "code": "002384.SZ", "qty": 200, "cost": 155.127, "price": 220.55, "tag": "精密制造", "market": 44110.0, "pnl": 13084.6, "pnlPct": 42.17},
-                    {"name": "东材科技", "code": "601208.SH", "qty": 1000, "cost": 52.445, "price": 52.45, "tag": "材料", "market": 52450.0, "pnl": 5.0, "pnlPct": 0.01},
-                    {"name": "科创芯片ETF华安", "code": "588290.SH", "qty": 9000, "cost": 1.24, "price": 3.565, "tag": "ETF", "market": 32085.0, "pnl": 20925.0, "pnlPct": 187.50},
-                    {"name": "中国平安", "code": "601318.SH", "qty": 100, "cost": -9.338, "price": 53.68, "tag": "金融", "market": 5368.0, "pnl": 6301.8, "pnlPct": 674.86}
-                ],
-                "cash": 232473.76,
-                "market": 317809.0,
-                "pnl": 86915.50,
-                "total": 550282.76
-            },
-            "alipay": {
-                "funds": [
-                    {"name": "南方有色金属ETF联接C", "code": "004433", "cost": 1.799, "qty": 32400.62, "nav": 1.9186, "tag": "有色", "market": 62163.83, "pnl": 3875.11, "pnlPct": 6.65},
-                    {"name": "中银国有企业债券C", "code": "006331", "cost": 1.2132, "qty": 44466.43, "nav": 1.2445, "tag": "债券", "market": 55338.47, "pnl": 1391.80, "pnlPct": 2.58},
-                    {"name": "广发纳斯达克100ETF联接A", "code": "270042", "cost": 5.4487, "qty": 2877.45, "nav": 8.2497, "tag": "QDII", "market": 23738.10, "pnl": 8059.74, "pnlPct": 51.41},
-                    {"name": "易方达全球成长精选混合C", "code": "012922", "cost": 2.5167, "qty": 14745.35, "nav": 3.9719, "tag": "QDII", "market": 58567.06, "pnl": 21457.43, "pnlPct": 57.82},
-                    {"name": "永赢创业板指数C", "code": "007665", "cost": 1.624, "qty": 48254.7, "nav": 2.1429, "tag": "指数", "market": 103404.99, "pnl": 25039.36, "pnlPct": 31.95},
-                    {"name": "博时黄金ETF联接C", "code": "002611", "cost": 2.4116, "qty": 37774.16, "nav": 3.1185, "tag": "黄金", "market": 117798.72, "pnl": 26702.55, "pnlPct": 29.31},
-                    {"name": "中金中证500指数增强C", "code": "003578", "cost": 2.0679, "qty": 40070.39, "nav": 2.5253, "tag": "指数", "market": 101189.76, "pnl": 18328.20, "pnlPct": 22.12},
-                    {"name": "华夏大中华信用精选债券A", "code": "002877", "cost": 1.0417, "qty": 52538.95, "nav": 1.0283, "tag": "债券", "market": 54025.80, "pnl": -704.02, "pnlPct": -1.29},
-                    {"name": "嘉实全球产业升级股票C", "code": "017731", "cost": 2.5833, "qty": 9716.15, "nav": 4.0329, "tag": "QDII", "market": 39184.26, "pnl": 14084.53, "pnlPct": 56.11},
-                    {"name": "中欧红利优享灵活配置混合C", "code": "004815", "cost": 2.0998, "qty": 16745.53, "nav": 1.9433, "tag": "混合", "market": 32541.59, "pnl": -2620.68, "pnlPct": -7.45},
-                    {"name": "广发全球精选股票A", "code": "270023", "cost": 4.2823, "qty": 11005.09, "nav": 6.3839, "tag": "QDII", "market": 70255.39, "pnl": 23128.30, "pnlPct": 49.08},
-                    {"name": "天弘纳斯达克100指数C", "code": "018044", "cost": 1.4529, "qty": 6038.75, "nav": 2.026, "tag": "QDII", "market": 12234.51, "pnl": 3460.81, "pnlPct": 39.45},
-                    {"name": "永赢科技智选混合C", "code": "022365", "cost": 2.8519, "qty": 29155.82, "nav": 5.4687, "tag": "科技", "market": 159444.43, "pnl": 76294.95, "pnlPct": 91.76}
-                ],
-                "yuebao": 22416,
-                "market": 889886.91,
-                "pnl": 218498.09,
-                "total": 912302.91
-            },
-            "zhaohang": {
-                "gold": 46450.55,
-                "gold_pnl": 7955.22,
-                "licai": 109059,
-                "cash": 12250,
-                "total": 167759.55
-            },
-            "summary": {
-                "total_assets": 1630345.22,
-                "total_pnl": 313368.81
-            }
-        };
+    // ===== 真实账户数据（唯一数据源） =====
+    const DATA = {
+        agongzi: {
+            label: 'A公子',
+            desc: '趋势最强股票 + 场内ETF',
+            stocks: [
+                { name: '兆易创新', code: '603986.SH', qty: 300, cost: 353.639, price: 468.74, tag: '芯片' },
+                { name: '光迅科技', code: '002281.SZ', qty: 200, cost: 155.526, price: 215.87, tag: '光模块' },
+                { name: '东山精密', code: '002384.SZ', qty: 200, cost: 155.127, price: 220.55, tag: '精密制造' },
+                { name: '东材科技', code: '601208.SH', qty: 1000, cost: 52.445, price: 52.45, tag: '材料' },
+                { name: '科创芯片ETF华安', code: '588290.SH', qty: 9000, cost: 1.24, price: 3.565, tag: 'ETF' },
+                { name: '中国平安', code: '601318.SH', qty: 100, cost: -9.338, price: 53.68, tag: '金融' }
+            ],
+            cash: 232473.76
+        },
+        alipay: {
+            label: '支付宝',
+            desc: '基金定投 + 余额宝',
+            funds: [
+                { name: '永赢科技智选混合C', code: '022365', qty: 29155.82, cost: 2.8519, nav: 5.4687, tag: '科技' },
+                { name: '博时黄金ETF联接C', code: '002611', qty: 37774.16, cost: 2.4116, nav: 3.1185, tag: '黄金' },
+                { name: '永赢创业板指数C', code: '007665', qty: 48254.70, cost: 1.624, nav: 2.1429, tag: '指数' },
+                { name: '中金中证500指数增强C', code: '003578', qty: 40070.39, cost: 2.0679, nav: 2.5253, tag: '指数' },
+                { name: '易方达全球成长精选混合C', code: '012922', qty: 14745.35, cost: 2.5167, nav: 3.9719, tag: 'QDII' },
+                { name: '广发全球精选股票A', code: '270023', qty: 11005.09, cost: 4.2823, nav: 6.3839, tag: 'QDII' },
+                { name: '嘉实全球产业升级股票C', code: '017731', qty: 9716.15, cost: 2.5833, nav: 4.0329, tag: 'QDII' },
+                { name: '广发纳斯达克100ETF联接A', code: '270042', qty: 2877.45, cost: 5.4487, nav: 8.2497, tag: 'QDII' },
+                { name: '天弘纳斯达克100指数C', code: '018044', qty: 6038.75, cost: 1.4529, nav: 2.026, tag: 'QDII' },
+                { name: '南方有色金属ETF联接C', code: '004433', qty: 32400.62, cost: 1.799, nav: 1.9186, tag: '有色' },
+                { name: '中银国有企业债券C', code: '006331', qty: 44466.43, cost: 1.2132, nav: 1.2445, tag: '债券' },
+                { name: '华夏大中华信用精选债券A', code: '002877', qty: 52538.95, cost: 1.0417, nav: 1.0283, tag: '债券' },
+                { name: '中欧红利优享灵活配置混合C', code: '004815', qty: 16745.53, cost: 2.0998, nav: 1.9433, tag: '混合' }
+            ],
+            yuebao: 22416
+        },
+        zhaohang: {
+            label: '招商银行',
+            desc: '黄金 + 理财 + 现金',
+            gold: 46450.55,
+            gold_cost: 38495.33,
+            licai: 109059,
+            cash: 12250
+        }
+    };
 
-        // ===== 格式化函数 =====
-        function formatMoney(num) {
-            return '¥' + Math.round(num).toLocaleString('zh-CN');
-        }
-        
-        function formatMoneyDecimal(num) {
-            return '¥' + num.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        }
-        
-        function formatPct(num) {
-            return (num >= 0 ? '+' : '') + num.toFixed(2) + '%';
-        }
+    // ===== 工具函数 =====
+    function fmt(n) { return Math.round(n).toLocaleString('zh-CN'); }
+    function fmtDec(n) { return n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
+    function pnlClass(n) { return n >= 0 ? 'up' : 'down'; }
 
-        // ===== 渲染持仓项 =====
-        function renderHoldingItem(item, type) {
-            const pnlClass = item.pnl >= 0 ? 'up' : 'down';
-            const iconText = item.name.charAt(0);
-            const qtyText = type === 'stock' ? `${item.qty}股` : `${item.qty.toFixed(0)}份`;
-            const priceText = type === 'stock' ? `现价 ${item.price}` : `净值 ${item.nav}`;
-            
-            return `
-                <div class="holding-item">
-                    <div class="holding-icon ${pnlClass}">${iconText}</div>
-                    <div class="holding-info">
-                        <div class="holding-name">
-                            ${item.name}
-                            ${item.tag ? `<span class="holding-tag">${item.tag}</span>` : ''}
-                        </div>
-                        <div class="holding-code">${item.code} · ${qtyText}</div>
-                    </div>
-                    <div class="holding-value">
-                        <div class="holding-pnl ${pnlClass}">${item.pnl >= 0 ? '+' : ''}${formatMoney(item.pnl)}</div>
-                        <div class="holding-pnl-pct ${pnlClass}">${formatPct(item.pnlPct)}</div>
-                    </div>
+    // ===== 计算函数 =====
+    function calcStock(s) {
+        const market = s.qty * s.price;
+        const costTotal = s.qty * s.cost;
+        const pnl = market - costTotal;
+        const pnlPct = costTotal !== 0 ? (pnl / Math.abs(costTotal)) * 100 : 0;
+        return { ...s, market, pnl, pnlPct };
+    }
+
+    function calcFund(f) {
+        const market = f.qty * f.nav;
+        const costTotal = f.qty * f.cost;
+        const pnl = market - costTotal;
+        const pnlPct = costTotal !== 0 ? (pnl / Math.abs(costTotal)) * 100 : 0;
+        return { ...f, market, pnl, pnlPct };
+    }
+
+    // ===== Tab 切换 =====
+    function switchTab(name, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        if (el) el.classList.add('active');
+    }
+
+    // ===== 渲染持仓Tab =====
+    function renderPortfolio() {
+        const a = DATA.agongzi;
+        const al = DATA.alipay;
+        const zh = DATA.zhaohang;
+
+        // 计算A公子
+        const aStocks = a.stocks.map(calcStock);
+        const aMarket = aStocks.reduce((s, x) => s + x.market, 0);
+        const aPnl = aStocks.reduce((s, x) => s + x.pnl, 0);
+        const aTotal = aMarket + a.cash;
+
+        // 计算支付宝
+        const alFunds = al.funds.map(calcFund);
+        const alMarket = alFunds.reduce((s, x) => s + x.market, 0);
+        const alPnl = alFunds.reduce((s, x) => s + x.pnl, 0);
+        const alTotal = alMarket + al.yuebao;
+
+        // 计算招行
+        const zhGoldPnl = zh.gold - zh.gold_cost;
+        const zhTotal = zh.gold + zh.licai + zh.cash;
+
+        // 总计
+        const totalAssets = aTotal + alTotal + zhTotal;
+        const totalPnl = aPnl + alPnl + zhGoldPnl;
+        const totalCost = totalAssets - totalPnl;
+        const totalCash = a.cash + al.yuebao + zh.cash;
+        const totalMarket = aMarket + alMarket + zh.gold + zh.licai;
+        const positionPct = (totalMarket / totalAssets * 100).toFixed(1);
+        const pnlPct = totalCost > 0 ? (totalPnl / totalCost * 100) : 0;
+
+        // 更新概览
+        document.getElementById('totalAssets').textContent = '¥' + fmt(totalAssets);
+        const pnlEl = document.getElementById('totalPnl');
+        pnlEl.textContent = (totalPnl >= 0 ? '+' : '') + '¥' + fmt(totalPnl);
+        pnlEl.className = 'metric-value ' + pnlClass(totalPnl);
+        document.getElementById('totalPnlPct').textContent = '收益率 ' + fmtPct(pnlPct);
+        document.getElementById('totalCash').textContent = '¥' + fmt(totalCash);
+        document.getElementById('position').textContent = positionPct + '%';
+        document.getElementById('marketValue').textContent = '持仓 ¥' + fmt(totalMarket);
+        document.getElementById('updateTime').textContent = new Date().toLocaleDateString('zh-CN');
+
+        // 渲染A公子持仓
+        let html = '';
+        html += `<div class="card">
+            <div class="account-header">
+                <div><div class="account-name">${a.label}</div><div class="account-desc">${a.desc}</div></div>
+                <div class="account-stats">
+                    <div><div class="account-stat-value" style="color:${pnlClass(aPnl)}">${aPnl >= 0 ? '+' : ''}¥${fmt(aPnl)}</div><div class="account-stat-label">持仓盈亏</div></div>
+                    <div><div class="account-stat-value">¥${fmt(aTotal)}</div><div class="account-stat-label">总资产</div></div>
                 </div>
-            `;
-        }
-        
-        // ===== 渲染招行持仓 =====
-        function renderZhaohangHoldings() {
-            const zhaohang = accountData.zhaohang;
-            const goldPct = zhaohang.gold_pnl / (zhaohang.gold - zhaohang.gold_pnl) * 100;
-            
-            return `
-                <div class="holding-item">
-                    <div class="holding-icon up">金</div>
-                    <div class="holding-info">
-                        <div class="holding-name">
-                            招行黄金账户
-                            <span class="holding-tag">黄金</span>
-                        </div>
-                        <div class="holding-code">持仓约47克 · 成本约818元/克</div>
-                    </div>
-                    <div class="holding-value">
-                        <div class="holding-pnl up">+${formatMoney(zhaohang.gold_pnl)}</div>
-                        <div class="holding-pnl-pct up">+${goldPct.toFixed(2)}%</div>
-                    </div>
+            </div>
+            <div class="card-header"><span class="card-title">持仓明细</span><span class="card-badge">${aStocks.length}只</span></div>`;
+
+        // 按盈亏排序
+        const sortedStocks = [...aStocks].sort((x, y) => y.pnl - x.pnl);
+        sortedStocks.forEach(s => {
+            const tagClass = s.pnlPct > 50 ? 'gold' : s.pnlPct < 0 ? 'red' : 'green';
+            html += `<div class="holding-item">
+                <div class="holding-left">
+                    <div class="holding-top"><span class="holding-name">${s.name}</span><span class="holding-tag ${tagClass}">${s.tag}</span></div>
+                    <div class="holding-code">${s.code} · ${s.qty.toLocaleString()}股 · 成本 ${s.cost < 0 ? '负成本' : '¥' + s.cost.toFixed(2)}</div>
                 </div>
-                <div class="holding-item">
-                    <div class="holding-icon">理</div>
-                    <div class="holding-info">
-                        <div class="holding-name">招行理财产品</div>
-                        <div class="holding-code">稳健型理财</div>
-                    </div>
-                    <div class="holding-value">
-                        <div class="holding-pnl">-</div>
-                        <div class="holding-price-info">${formatMoney(zhaohang.licai)}</div>
-                    </div>
+                <div class="holding-right">
+                    <div class="holding-pnl ${pnlClass(s.pnl)}">${s.pnl >= 0 ? '+' : ''}¥${fmt(s.pnl)}</div>
+                    <div class="holding-price">¥${s.price} · ${fmtPct(s.pnlPct)}</div>
                 </div>
-                <div class="holding-item">
-                    <div class="holding-icon">现</div>
-                    <div class="holding-info">
-                        <div class="holding-name">现金及固收</div>
-                        <div class="holding-code">活期+货币基金</div>
-                    </div>
-                    <div class="holding-value">
-                        <div class="holding-pnl">-</div>
-                        <div class="holding-price-info">${formatMoney(zhaohang.cash)}</div>
-                    </div>
+            </div>`;
+        });
+
+        html += `<div style="margin-top:12px;padding:10px 14px;background:var(--bg-secondary);border-radius:10px;display:flex;justify-content:space-between;font-size:12px;color:var(--text-secondary);">
+            <span>可用余额</span><span style="color:var(--text-primary);font-weight:600;">¥${fmtDec(a.cash)}</span>
+        </div></div>`;
+
+        // 渲染支付宝基金
+        const sortedFunds = [...alFunds].sort((x, y) => y.pnl - x.pnl);
+        html += `<div class="card">
+            <div class="account-header">
+                <div><div class="account-name">${al.label}</div><div class="account-desc">${al.desc}</div></div>
+                <div class="account-stats">
+                    <div><div class="account-stat-value" style="color:${pnlClass(alPnl)}">${alPnl >= 0 ? '+' : ''}¥${fmt(alPnl)}</div><div class="account-stat-label">基金盈亏</div></div>
+                    <div><div class="account-stat-value">¥${fmt(alTotal)}</div><div class="account-stat-label">总资产</div></div>
                 </div>
-            `;
-        }
-        
-        // ===== 初始化数据展示 =====
-        function initDashboard() {
-            const summary = accountData.summary;
-            const agongzi = accountData.agongzi;
-            const alipay = accountData.alipay;
-            const zhaohang = accountData.zhaohang;
-            
-            // 计算汇总数据
-            const totalCash = agongzi.cash + alipay.yuebao + zhaohang.cash;
-            const totalMarket = agongzi.market + alipay.market + zhaohang.gold + zhaohang.licai;
-            const positionRatio = (totalMarket / summary.total_assets * 100).toFixed(1);
-            const pnlPct = (summary.total_pnl / (summary.total_assets - summary.total_pnl) * 100).toFixed(2);
-            
-            // 更新首页总资产卡片
-            document.getElementById('home-total-assets').textContent = formatMoney(summary.total_assets);
-            document.getElementById('home-total-pnl').innerHTML = `
-                <span>${summary.total_pnl >= 0 ? '+' : ''}</span>
-                <span>${formatMoney(summary.total_pnl)}</span>
-                <span style="opacity: 0.8;">(${formatPct(pnlPct)})</span>
-            `;
-            
-            // 更新首页账户卡片
-            document.getElementById('home-agongzi-value').textContent = formatMoney(agongzi.total);
-            document.getElementById('home-alipay-value').textContent = formatMoney(alipay.total);
-            document.getElementById('home-zhaohang-value').textContent = formatMoney(zhaohang.total);
-            
-            // 渲染首页持仓预览 (按盈亏排序取前4)
-            const topHoldings = [...agongzi.stocks].sort((a, b) => b.pnl - a.pnl).slice(0, 4);
-            document.getElementById('home-holdings-preview').innerHTML = topHoldings.map(s => renderHoldingItem(s, 'stock')).join('');
-            
-            // 渲染持仓Tab - A公子
-            document.getElementById('agongzi-summary').textContent = `${agongzi.stocks.length}只 · ${formatMoney(agongzi.market)}`;
-            document.getElementById('agongzi-holdings-list').innerHTML = agongzi.stocks.map(s => renderHoldingItem(s, 'stock')).join('');
-            
-            // 渲染持仓Tab - 支付宝基金 (按盈亏排序)
-            const sortedFunds = [...alipay.funds].sort((a, b) => b.pnl - a.pnl);
-            document.getElementById('alipay-summary').textContent = `${alipay.funds.length}只 · ${formatMoney(alipay.market)}`;
-            document.getElementById('alipay-holdings-list').innerHTML = sortedFunds.map(f => renderHoldingItem(f, 'fund')).join('');
-            
-            // 渲染持仓Tab - 招行
-            document.getElementById('zhaohang-summary').textContent = formatMoney(zhaohang.total);
-            document.getElementById('zhaohang-holdings-list').innerHTML = renderZhaohangHoldings();
-            
-            // 渲染五池Tab - 持仓池
-            document.getElementById('pools-holdings-list').innerHTML = agongzi.stocks.map(s => renderHoldingItem(s, 'stock')).join('');
-        }
+            </div>
+            <div class="card-header"><span class="card-title">基金持仓</span><span class="card-badge">${alFunds.length}只</span></div>`;
 
-        // Tab switching function
-        function switchTabPanel(tabName) {
-            // Hide all tab panels
-            document.querySelectorAll('.tab-panel').forEach(panel => {
-                panel.classList.remove('active');
-            });
-            
-            // Show selected tab panel
-            const targetPanel = document.getElementById('tab-' + tabName);
-            if (targetPanel) {
-                targetPanel.classList.add('active');
-            }
-            
-            // Update tab bar active state
-            document.querySelectorAll('.tab-item').forEach((tab, index) => {
-                tab.classList.remove('active');
-                const tabLabels = ['home', 'holdings', 'trade', 'pools', 'settings'];
-                if (tabLabels[index] === tabName) {
-                    tab.classList.add('active');
-                }
-            });
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        // Tab bar click handlers
-        document.querySelectorAll('.tab-item').forEach((tab, index) => {
-            tab.addEventListener('click', function() {
-                const tabLabels = ['home', 'holdings', 'trade', 'pools', 'settings'];
-                switchTabPanel(tabLabels[index]);
-            });
+        sortedFunds.forEach(f => {
+            const tagClass = f.pnlPct > 50 ? 'gold' : f.pnlPct < 0 ? 'red' : 'green';
+            html += `<div class="holding-item">
+                <div class="holding-left">
+                    <div class="holding-top"><span class="holding-name">${f.name}</span><span class="holding-tag ${tagClass}">${f.tag}</span></div>
+                    <div class="holding-code">${f.code} · ${f.qty.toFixed(0)}份 · 成本 ${f.cost.toFixed(4)}</div>
+                </div>
+                <div class="holding-right">
+                    <div class="holding-pnl ${pnlClass(f.pnl)}">${f.pnl >= 0 ? '+' : ''}¥${fmt(f.pnl)}</div>
+                    <div class="holding-price">净值${f.nav} · ${fmtPct(f.pnlPct)}</div>
+                </div>
+            </div>`;
         });
 
-        // Checklist toggle
-        document.querySelectorAll('.checklist-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const checkbox = this.querySelector('.checklist-checkbox');
-                const text = this.querySelector('.checklist-text');
-                checkbox.classList.toggle('checked');
-                text.classList.toggle('completed');
-                if (checkbox.classList.contains('checked')) {
-                    checkbox.innerHTML = '&#10003;';
-                } else {
-                    checkbox.innerHTML = '';
-                }
-            });
-        });
+        html += `<div style="margin-top:12px;padding:10px 14px;background:var(--bg-secondary);border-radius:10px;display:flex;justify-content:space-between;font-size:12px;color:var(--text-secondary);">
+            <span>余额宝</span><span style="color:var(--text-primary);font-weight:600;">¥${fmtDec(al.yuebao)}</span>
+        </div></div>`;
 
-        // Touch feedback for holding items
-        document.querySelectorAll('.holding-item').forEach(item => {
-            item.addEventListener('touchstart', function() {
-                this.style.backgroundColor = 'var(--ios-gray6)';
-            });
-            item.addEventListener('touchend', function() {
-                this.style.backgroundColor = '';
-            });
-        });
+        // 渲染招行
+        const goldPct = zh.gold_cost > 0 ? (zhGoldPnl / zh.gold_cost * 100) : 0;
+        html += `<div class="card">
+            <div class="account-header">
+                <div><div class="account-name">${zh.label}</div><div class="account-desc">${zh.desc}</div></div>
+                <div class="account-stats">
+                    <div><div class="account-stat-value" style="color:${pnlClass(zhGoldPnl)}">${zhGoldPnl >= 0 ? '+' : ''}¥${fmt(zhGoldPnl)}</div><div class="account-stat-label">黄金盈亏</div></div>
+                    <div><div class="account-stat-value">¥${fmt(zhTotal)}</div><div class="account-stat-label">总资产</div></div>
+                </div>
+            </div>
+            <div class="card-header"><span class="card-title">资产明细</span><span class="card-badge">3项</span></div>
+            <div class="holding-item">
+                <div class="holding-left">
+                    <div class="holding-top"><span class="holding-name">招行黄金账户</span><span class="holding-tag gold">黄金</span></div>
+                    <div class="holding-code">持仓约47克 · 成本约818元/克</div>
+                </div>
+                <div class="holding-right">
+                    <div class="holding-pnl up">+¥${fmt(zhGoldPnl)}</div>
+                    <div class="holding-price">¥${fmtDec(zh.gold)} · +${goldPct.toFixed(1)}%</div>
+                </div>
+            </div>
+            <div class="holding-item">
+                <div class="holding-left">
+                    <div class="holding-top"><span class="holding-name">理财产品</span><span class="holding-tag">理财</span></div>
+                    <div class="holding-code">稳健型理财</div>
+                </div>
+                <div class="holding-right">
+                    <div class="holding-pnl" style="color:var(--text-secondary)">—</div>
+                    <div class="holding-price">¥${fmt(zh.licai)}</div>
+                </div>
+            </div>
+            <div class="holding-item">
+                <div class="holding-left">
+                    <div class="holding-top"><span class="holding-name">现金及固收</span><span class="holding-tag">现金</span></div>
+                    <div class="holding-code">活期+货币基金</div>
+                </div>
+                <div class="holding-right">
+                    <div class="holding-pnl" style="color:var(--text-secondary)">—</div>
+                    <div class="holding-price">¥${fmt(zh.cash)}</div>
+                </div>
+            </div>
+        </div>`;
 
-        // Pull to refresh simulation
-        let touchStartY = 0;
-        const content = document.querySelector('.content');
-        
-        content.addEventListener('touchstart', function(e) {
-            touchStartY = e.touches[0].clientY;
-        });
-        
-        content.addEventListener('touchmove', function(e) {
-            const touchY = e.touches[0].clientY;
-            const diff = touchY - touchStartY;
-            if (diff > 100 && window.scrollY === 0) {
-                // Trigger refresh
-                console.log('Refreshing...');
-            }
-        });
+        document.getElementById('portfolioContent').innerHTML = html;
 
-        // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', initDashboard);
+        // 渲染五池持仓池
+        document.getElementById('poolHoldingCount').textContent = aStocks.length + '只';
+        let poolHtml = '';
+        sortedStocks.forEach(s => {
+            poolHtml += `<div class="holding-item">
+                <div class="holding-left">
+                    <div class="holding-top"><span class="holding-name">${s.name}</span><span class="holding-tag">${s.tag}</span></div>
+                    <div class="holding-code">${s.code} · ${s.qty.toLocaleString()}股</div>
+                </div>
+                <div class="holding-right">
+                    <div class="holding-pnl ${pnlClass(s.pnl)}">${s.pnl >= 0 ? '+' : ''}¥${fmt(s.pnl)}</div>
+                    <div class="holding-price">${fmtPct(s.pnlPct)}</div>
+                </div>
+            </div>`;
+        });
+        document.getElementById('poolHoldingsList').innerHTML = poolHtml;
+    }
+
+    // ===== 初始化 =====
+    renderPortfolio();
     </script>
 </body>
 </html>
