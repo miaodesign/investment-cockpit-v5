@@ -647,25 +647,23 @@ function render() {
 }
 
 // ===== 实时行情API =====
-// 新浪财经API，分批请求避免URL过长
+// 腾讯财经API: http://qt.gtimg.cn/q=sh601318,sz002384
+// 返回格式: v_sh601318="1~中国平安~601318~53.68~53.50~53.68~54.20~53.30~..."
+// 字段: 0=未知 1=名称 2=代码 3=当前价 4=昨收 5=今开 6=成交量(手) 7=外盘 8=内盘 9=买一价 ...
+// 30=涨跌额 31=涨跌幅 32=最高价 33=最低价 34=价格/成交量(手)/成交额 35=成交量(手) 36=成交额(万)
 
 // 收集所有标的代码（持仓7 + 金刚池5 + 候选池5 + 监控池8 + 观察池12 = 37只）
 function buildAllStockCodes() {
     const codes = {};
-    // 持仓池
-    DATA.agongzi.stocks.forEach(s => { codes[s.code] = codeToSina(s.code); });
-    // 金刚池
-    DATA.pools.diamond.forEach(s => { codes[s.code] = codeToSina(s.code); });
-    // 候选池
-    DATA.pools.candidate.forEach(s => { codes[s.code] = codeToSina(s.code); });
-    // 监控池
-    DATA.pools.monitor.forEach(s => { codes[s.code] = codeToSina(s.code); });
-    // 观察池
-    DATA.pools.observe.forEach(s => { codes[s.code] = codeToSina(s.code); });
+    DATA.agongzi.stocks.forEach(s => { codes[s.code] = codeToTencent(s.code); });
+    DATA.pools.diamond.forEach(s => { codes[s.code] = codeToTencent(s.code); });
+    DATA.pools.candidate.forEach(s => { codes[s.code] = codeToTencent(s.code); });
+    DATA.pools.monitor.forEach(s => { codes[s.code] = codeToTencent(s.code); });
+    DATA.pools.observe.forEach(s => { codes[s.code] = codeToTencent(s.code); });
     return codes;
 }
 
-function codeToSina(code) {
+function codeToTencent(code) {
     // 603986.SH -> sh603986, 300502.SZ -> sz300502
     return code.replace('.', '').toLowerCase();
 }
@@ -673,25 +671,23 @@ function codeToSina(code) {
 // 存储实时数据（价格+涨跌幅）
 const realTimeData = {};
 
-// 解析新浪返回数据
-function parseSinaData(data) {
+// 解析腾讯返回数据
+function parseTencentData(data) {
     const match = data.match(/"([^"]+)"/);
     if (!match) return null;
-    const parts = match[1].split(',');
-    if (parts.length < 10) return null;
-    const current = parseFloat(parts[3]);
-    const prevClose = parseFloat(parts[2]);
-    const change = prevClose > 0 ? ((current - prevClose) / prevClose * 100) : 0;
+    const parts = match[1].split('~');
+    if (parts.length < 34) return null;
     return {
-        name: parts[0],
-        open: parseFloat(parts[1]),
-        prevClose: prevClose,
-        current: current,
-        high: parseFloat(parts[4]),
-        low: parseFloat(parts[5]),
-        change: change,
-        volume: parseInt(parts[8]),
-        amount: parseFloat(parts[9])
+        name: parts[1],
+        code: parts[2],
+        current: parseFloat(parts[3]),
+        prevClose: parseFloat(parts[4]),
+        open: parseFloat(parts[5]),
+        high: parseFloat(parts[32]),
+        low: parseFloat(parts[33]),
+        change: parseFloat(parts[31]),
+        volume: parseInt(parts[6]),
+        amount: parseFloat(parts[37]) || 0
     };
 }
 
@@ -708,27 +704,21 @@ async function fetchRealTimePrices() {
     let completed = 0;
     const total = batches.length;
 
-    batches.forEach((batch, idx) => {
-        const codeMap = {};
-        const sinaCodes = batch.map(([ourCode, sinaCode]) => {
-            codeMap[sinaCode] = ourCode;
-            return sinaCode;
-        }).join(',');
+    batches.forEach((batch) => {
+        const sinaCodes = batch.map(([ourCode, tencentCode]) => tencentCode).join(',');
 
         const script = document.createElement('script');
-        script.src = `https://hq.sinajs.cn/list=${sinaCodes}`;
+        script.src = `https://qt.gtimg.cn/q=${sinaCodes}&r=${Math.random()}`;
         script.onload = () => {
-            batch.forEach(([ourCode, sinaCode]) => {
-                const data = window[`hq_str_${sinaCode}`];
+            batch.forEach(([ourCode, tencentCode]) => {
+                const data = window[`v_${tencentCode}`];
                 if (data) {
-                    const parsed = parseSinaData(`"${data}"`);
+                    const parsed = parseTencentData(`"${data}"`);
                     if (parsed) {
                         realTimeData[ourCode] = parsed;
-                        // 更新持仓价格
                         DATA.agongzi.stocks.forEach(s => {
                             if (s.code === ourCode) s.price = parsed.current;
                         });
-                        // 更新候选池价格
                         DATA.pools.candidate.forEach(s => {
                             if (s.code === ourCode) s.price = parsed.current;
                         });
