@@ -371,6 +371,13 @@ const DATA = {
     },
     zhaohang: { label: '招商银行', gold: 46450.55, gold_cost: 38495.33, licai: 109059, cash: 12250 },
     pools: {
+        diamond: [
+            { name: '深南电路', code: '002916.SZ', score: 95, reason: 'PCB龙头，AI服务器核心受益' },
+            { name: '生益科技', code: '600183.SH', score: 90, reason: '覆铜板龙头，业绩确定性高' },
+            { name: '宏和科技', code: '603256.SH', score: 88, reason: '电子级玻纤布，国产替代' },
+            { name: '兆易创新', code: '603986.SH', score: 92, reason: '存储+MCU双龙头，AIOT受益' },
+            { name: '中际旭创', code: '300308.SZ', score: 96, reason: '光模块全球龙头，800G放量' }
+        ],
         candidate: [
             { name: '新易盛', code: '300502.SZ', score: 88, price: 85.2, buyPrice: 82, reason: '光模块龙头，趋势良好，等5日线' },
             { name: '天孚通信', code: '300394.SZ', score: 85, price: 62.5, buyPrice: 58, reason: '光通信器件，等待突破确认' },
@@ -378,8 +385,30 @@ const DATA = {
             { name: '海光信息', code: '688041.SH', score: 80, price: 95, buyPrice: 85, reason: '国产CPU，趋势向上' },
             { name: '长光华芯', code: '688048.SH', score: 78, price: 45, buyPrice: 40, reason: '激光芯片，等待放量' }
         ],
-        monitor: ['中天科技','亨通光电','浪潮信息','中科曙光','澜起科技','鹏鼎控股','沪电股份','胜宏科技'],
-        observe: ['长飞光纤','申菱环境','高澜股份','英维克','润泽科技','科华数据','中控技术','绿的谐波','联特科技','华工科技','光库科技','工业富联']
+        monitor: [
+            { name: '中天科技', code: '600522.SH', score: 75 },
+            { name: '亨通光电', code: '600487.SH', score: 73 },
+            { name: '浪潮信息', code: '000977.SZ', score: 78 },
+            { name: '中科曙光', code: '603019.SH', score: 76 },
+            { name: '澜起科技', code: '688008.SH', score: 80 },
+            { name: '鹏鼎控股', code: '002938.SZ', score: 74 },
+            { name: '沪电股份', code: '002463.SZ', score: 77 },
+            { name: '胜宏科技', code: '300476.SZ', score: 76 }
+        ],
+        observe: [
+            { name: '长飞光纤', code: '601869.SH', score: 65 },
+            { name: '申菱环境', code: '301018.SZ', score: 62 },
+            { name: '高澜股份', code: '300499.SZ', score: 60 },
+            { name: '英维克', code: '002837.SZ', score: 64 },
+            { name: '润泽科技', code: '300442.SZ', score: 68 },
+            { name: '科华数据', code: '002335.SZ', score: 66 },
+            { name: '中控技术', code: '677777.SH', score: 63 },
+            { name: '绿的谐波', code: '688017.SH', score: 67 },
+            { name: '联特科技', code: '301205.SZ', score: 64 },
+            { name: '华工科技', code: '000988.SZ', score: 70 },
+            { name: '光库科技', code: '300620.SZ', score: 63 },
+            { name: '工业富联', code: '601138.SH', score: 72 }
+        ]
     }
 };
 
@@ -535,9 +564,15 @@ function render() {
     // ===== 决策Tab =====
     const scoreColor = s => s >= 90 ? 'var(--gold)' : s >= 80 ? 'var(--down)' : s >= 70 ? 'var(--warning)' : 'var(--up)';
 
-    // 金刚池
-    const diamondStocks = aStocks.filter(s => s.pool === 'diamond');
-    document.getElementById('poolDiamond').innerHTML = `<div class="pool-header"><div class="pool-icon diamond">👑</div><span class="pool-title">金刚池</span><span class="pool-count">${diamondStocks.length}只 · 核心持仓</span></div>` + diamondStocks.map(s => `<div class="pool-stock"><div class="pool-stock-header"><span class="pool-stock-name">${s.name}</span><span class="pool-stock-score" style="background:${scoreColor(s.score)}22;color:${scoreColor(s.score)}">${s.score}分</span></div><div class="pool-stock-body"><div class="pool-stock-pnl ${pnlCls(s.pnl)}">${s.pnl>=0?'+':''}¥${fmt(s.pnl)}</div><div class="pool-stock-info">${fmtPct(s.pnlPct)} · ¥${s.price}<br>${s.status}</div></div><div class="pool-stock-footer"><span class="pool-stock-status" style="color:${s.statusColor}">${s.status}</span><div class="pool-stock-actions"><button class="pool-btn">取消金刚</button></div></div></div>`).join('');
+    // 金刚池（独立于持仓，精选自选股）
+    const diamondHtml = DATA.pools.diamond.map(s => {
+        const rt = realTimeData[s.code];
+        const price = rt ? rt.current.toFixed(2) : '--';
+        const change = rt ? rt.change : 0;
+        const isHolding = DATA.agongzi.stocks.some(h => h.code === s.code);
+        return `<div class="pool-stock"><div class="pool-stock-header"><span class="pool-stock-name">${s.name}${isHolding?' <span style="font-size:9px;color:var(--accent-light)">·持仓中</span>':''}</span><span class="pool-stock-score" style="background:${scoreColor(s.score)}22;color:${scoreColor(s.score)}">${s.score}分</span></div><div class="pool-stock-body"><div style="font-size:18px;font-weight:700;color:${change>=0?'var(--up)':'var(--down)'}">¥${price}</div><div class="pool-stock-info">${change>=0?'+':''}${change.toFixed(2)}%<br><span style="color:var(--text-secondary)">${s.reason}</span></div></div></div>`;
+    }).join('');
+    document.getElementById('poolDiamond').innerHTML = `<div class="pool-header"><div class="pool-icon diamond">👑</div><span class="pool-title">金刚池</span><span class="pool-count">${DATA.pools.diamond.length}只 · 精选自选</span></div>` + diamondHtml;
 
     // 持仓池
     const holdingStocks = aStocks.filter(s => s.pool !== 'diamond').sort((a,b) => b.score - a.score);
@@ -547,13 +582,30 @@ function render() {
     }).join('');
 
     // 候选池
-    document.getElementById('poolCandidate').innerHTML = `<div class="pool-header"><div class="pool-icon candidate">🎯</div><span class="pool-title">候选池</span><span class="pool-count">${DATA.pools.candidate.length}只 · 等待买入</span></div>` + DATA.pools.candidate.map(c => `<div class="candidate-card"><div class="candidate-header"><span class="candidate-name">${c.name}</span><span class="candidate-score" style="background:${scoreColor(c.score)}22;color:${scoreColor(c.score)}">${c.score}分</span></div><div class="candidate-desc">${c.reason}</div><div class="candidate-price">当前¥${c.price} → 建议买入≤¥${c.buyPrice}</div><div class="candidate-actions"><button class="pool-btn">价格提醒</button><button class="pool-btn">移监控</button><button class="pool-btn">模拟买入</button></div></div>`).join('');
+    document.getElementById('poolCandidate').innerHTML = `<div class="pool-header"><div class="pool-icon candidate">🎯</div><span class="pool-title">候选池</span><span class="pool-count">${DATA.pools.candidate.length}只 · 等待买入</span></div>` + DATA.pools.candidate.map(c => {
+        const rt = realTimeData[c.code];
+        const change = rt ? rt.change : 0;
+        const dist = ((c.price - c.buyPrice) / c.price * 100).toFixed(1);
+        return `<div class="candidate-card"><div class="candidate-header"><span class="candidate-name">${c.name}</span><span class="candidate-score" style="background:${scoreColor(c.score)}22;color:${scoreColor(c.score)}">${c.score}分</span></div><div class="candidate-desc">${c.reason}</div><div class="candidate-price" style="display:flex;justify-content:space-between;align-items:center"><span>¥${c.price} <span style="color:${change>=0?'var(--up)':'var(--down)'};font-weight:600">${change>=0?'+':''}${change.toFixed(2)}%</span></span><span style="color:var(--text-secondary)">距买入价 ${dist}%</span></div><div class="candidate-actions"><button class="pool-btn">价格提醒</button><button class="pool-btn">移监控</button><button class="pool-btn">模拟买入</button></div></div>`;
+    }).join('');
 
     // 监控池
-    document.getElementById('poolMonitor').innerHTML = `<div class="pool-header"><div class="pool-icon monitor">📡</div><span class="pool-title">监控池</span><span class="pool-count">${DATA.pools.monitor.length}只</span></div><div class="pool-tags">${DATA.pools.monitor.map(n=>`<span class="pool-tag">${n}</span>`).join('')}</div>`;
+    const monitorHtml = DATA.pools.monitor.map(s => {
+        const rt = realTimeData[s.code];
+        const price = rt ? rt.current.toFixed(2) : '--';
+        const change = rt ? rt.change : 0;
+        return `<div class="pool-tag" style="display:flex;justify-content:space-between;align-items:center;min-width:120px;padding:6px 10px"><span>${s.name}</span><span style="font-weight:600;color:${change>=0?'var(--up)':'var(--down)'}">${price} ${change>=0?'+':''}${change.toFixed(2)}%</span></div>`;
+    }).join('');
+    document.getElementById('poolMonitor').innerHTML = `<div class="pool-header"><div class="pool-icon monitor">📡</div><span class="pool-title">监控池</span><span class="pool-count">${DATA.pools.monitor.length}只</span></div><div class="pool-tags">${monitorHtml}</div>`;
 
     // 观察池
-    document.getElementById('poolObserve').innerHTML = `<div class="pool-header"><div class="pool-icon observe">👁</div><span class="pool-title">观察池</span><span class="pool-count">${DATA.pools.observe.length}只</span></div><div class="pool-tags">${DATA.pools.observe.map(n=>`<span class="pool-tag">${n}</span>`).join('')}</div>`;
+    const observeHtml = DATA.pools.observe.map(s => {
+        const rt = realTimeData[s.code];
+        const price = rt ? rt.current.toFixed(2) : '--';
+        const change = rt ? rt.change : 0;
+        return `<div class="pool-tag" style="display:flex;justify-content:space-between;align-items:center;min-width:120px;padding:6px 10px"><span>${s.name}</span><span style="font-weight:600;color:${change>=0?'var(--up)':'var(--down)'}">${price} ${change>=0?'+':''}${change.toFixed(2)}%</span></div>`;
+    }).join('');
+    document.getElementById('poolObserve').innerHTML = `<div class="pool-header"><div class="pool-icon observe">👁</div><span class="pool-title">观察池</span><span class="pool-count">${DATA.pools.observe.length}只</span></div><div class="pool-tags">${observeHtml}</div>`;
 
     // 操作清单
     const todos = [];
@@ -595,76 +647,106 @@ function render() {
 }
 
 // ===== 实时行情API =====
-// 新浪财经API: https://hq.sinajs.cn/list=sh601318,sz002384,sh600183,sh603256,sh601208,sh588290,sh603986
-// 代码格式: sh=上海, sz=深圳
+// 新浪财经API，分批请求避免URL过长
 
-const STOCK_CODES = {
-    '601318.SH': 'sh601318',  // 中国平安
-    '002384.SZ': 'sz002384',  // 东山精密
-    '600183.SH': 'sh600183',  // 生益科技
-    '603256.SH': 'sh603256',  // 宏和科技
-    '601208.SH': 'sh601208',  // 东材科技
-    '588290.SH': 'sh588290',  // 科创芯片ETF
-    '603986.SH': 'sh603986'   // 兆易创新
-};
+// 收集所有标的代码（持仓7 + 金刚池5 + 候选池5 + 监控池8 + 观察池12 = 37只）
+function buildAllStockCodes() {
+    const codes = {};
+    // 持仓池
+    DATA.agongzi.stocks.forEach(s => { codes[s.code] = codeToSina(s.code); });
+    // 金刚池
+    DATA.pools.diamond.forEach(s => { codes[s.code] = codeToSina(s.code); });
+    // 候选池
+    DATA.pools.candidate.forEach(s => { codes[s.code] = codeToSina(s.code); });
+    // 监控池
+    DATA.pools.monitor.forEach(s => { codes[s.code] = codeToSina(s.code); });
+    // 观察池
+    DATA.pools.observe.forEach(s => { codes[s.code] = codeToSina(s.code); });
+    return codes;
+}
+
+function codeToSina(code) {
+    // 603986.SH -> sh603986, 300502.SZ -> sz300502
+    return code.replace('.', '').toLowerCase();
+}
+
+// 存储实时数据（价格+涨跌幅）
+const realTimeData = {};
 
 // 解析新浪返回数据
-function parseSinaData(data, code) {
-    // 格式: var hq_str_sh601318="中国平安,53.68,53.50,53.68,54.20,53.30,53.68,53.69,123456,6655443322,100,53.68,200,53.69...";
+function parseSinaData(data) {
     const match = data.match(/"([^"]+)"/);
     if (!match) return null;
     const parts = match[1].split(',');
-    if (parts.length < 3) return null;
+    if (parts.length < 10) return null;
+    const current = parseFloat(parts[3]);
+    const prevClose = parseFloat(parts[2]);
+    const change = prevClose > 0 ? ((current - prevClose) / prevClose * 100) : 0;
     return {
         name: parts[0],
         open: parseFloat(parts[1]),
-        close: parseFloat(parts[2]),
-        current: parseFloat(parts[3]),
+        prevClose: prevClose,
+        current: current,
         high: parseFloat(parts[4]),
         low: parseFloat(parts[5]),
-        buy: parseFloat(parts[6]),
-        sell: parseFloat(parts[7]),
+        change: change,
         volume: parseInt(parts[8]),
         amount: parseFloat(parts[9])
     };
 }
 
-// 获取实时价格
+// 分批获取实时价格（每批最多20只，避免URL过长）
 async function fetchRealTimePrices() {
-    const codes = Object.values(STOCK_CODES).join(',');
-    try {
-        // 使用JSONP方式请求新浪财经API
+    const allCodes = buildAllStockCodes();
+    const entries = Object.entries(allCodes);
+    const batchSize = 20;
+    const batches = [];
+    for (let i = 0; i < entries.length; i += batchSize) {
+        batches.push(entries.slice(i, i + batchSize));
+    }
+
+    let completed = 0;
+    const total = batches.length;
+
+    batches.forEach((batch, idx) => {
+        const codeMap = {};
+        const sinaCodes = batch.map(([ourCode, sinaCode]) => {
+            codeMap[sinaCode] = ourCode;
+            return sinaCode;
+        }).join(',');
+
         const script = document.createElement('script');
-        script.src = `https://hq.sinajs.cn/list=${codes}`;
+        script.src = `https://hq.sinajs.cn/list=${sinaCodes}`;
         script.onload = () => {
-            // 解析返回的数据
-            Object.entries(STOCK_CODES).forEach(([ourCode, sinaCode]) => {
+            batch.forEach(([ourCode, sinaCode]) => {
                 const data = window[`hq_str_${sinaCode}`];
                 if (data) {
-                    const parsed = parseSinaData(`"${data}"`, sinaCode);
+                    const parsed = parseSinaData(`"${data}"`);
                     if (parsed) {
-                        updateStockPrice(ourCode, parsed.current);
+                        realTimeData[ourCode] = parsed;
+                        // 更新持仓价格
+                        DATA.agongzi.stocks.forEach(s => {
+                            if (s.code === ourCode) s.price = parsed.current;
+                        });
+                        // 更新候选池价格
+                        DATA.pools.candidate.forEach(s => {
+                            if (s.code === ourCode) s.price = parsed.current;
+                        });
                     }
                 }
             });
-            // 刷新显示
-            render();
+            completed++;
+            if (completed === total) {
+                render();
+                document.getElementById('updateTime').textContent = new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+            }
+        };
+        script.onerror = () => {
+            completed++;
+            if (completed === total) render();
         };
         document.head.appendChild(script);
-        // 清理script标签
         setTimeout(() => script.remove(), 5000);
-    } catch (e) {
-        console.error('获取实时行情失败:', e);
-    }
-}
-
-// 更新股票价格
-function updateStockPrice(code, price) {
-    // 更新A公子持仓价格
-    DATA.agongzi.stocks.forEach(s => {
-        if (s.code === code) {
-            s.price = price;
-        }
     });
 }
 
