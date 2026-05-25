@@ -594,6 +594,86 @@ function render() {
     document.getElementById('envScores').innerHTML = envData.map(e => `<div class="env-row"><div class="env-header"><span class="bar-name">${e.name}</span><span class="env-score" style="color:${e.color}">${e.score}分 · ${e.label}</span></div><div class="bar-track"><div class="bar-fill" style="width:${e.score}%;background:${e.color}"></div></div></div>`).join('');
 }
 
+// ===== 实时行情API =====
+// 新浪财经API: https://hq.sinajs.cn/list=sh601318,sz002384,sh600183,sh603256,sh601208,sh588290,sh603986
+// 代码格式: sh=上海, sz=深圳
+
+const STOCK_CODES = {
+    '601318.SH': 'sh601318',  // 中国平安
+    '002384.SZ': 'sz002384',  // 东山精密
+    '600183.SH': 'sh600183',  // 生益科技
+    '603256.SH': 'sh603256',  // 宏和科技
+    '601208.SH': 'sh601208',  // 东材科技
+    '588290.SH': 'sh588290',  // 科创芯片ETF
+    '603986.SH': 'sh603986'   // 兆易创新
+};
+
+// 解析新浪返回数据
+function parseSinaData(data, code) {
+    // 格式: var hq_str_sh601318="中国平安,53.68,53.50,53.68,54.20,53.30,53.68,53.69,123456,6655443322,100,53.68,200,53.69...";
+    const match = data.match(/"([^"]+)"/);
+    if (!match) return null;
+    const parts = match[1].split(',');
+    if (parts.length < 3) return null;
+    return {
+        name: parts[0],
+        open: parseFloat(parts[1]),
+        close: parseFloat(parts[2]),
+        current: parseFloat(parts[3]),
+        high: parseFloat(parts[4]),
+        low: parseFloat(parts[5]),
+        buy: parseFloat(parts[6]),
+        sell: parseFloat(parts[7]),
+        volume: parseInt(parts[8]),
+        amount: parseFloat(parts[9])
+    };
+}
+
+// 获取实时价格
+async function fetchRealTimePrices() {
+    const codes = Object.values(STOCK_CODES).join(',');
+    try {
+        // 使用JSONP方式请求新浪财经API
+        const script = document.createElement('script');
+        script.src = `https://hq.sinajs.cn/list=${codes}`;
+        script.onload = () => {
+            // 解析返回的数据
+            Object.entries(STOCK_CODES).forEach(([ourCode, sinaCode]) => {
+                const data = window[`hq_str_${sinaCode}`];
+                if (data) {
+                    const parsed = parseSinaData(`"${data}"`, sinaCode);
+                    if (parsed) {
+                        updateStockPrice(ourCode, parsed.current);
+                    }
+                }
+            });
+            // 刷新显示
+            render();
+        };
+        document.head.appendChild(script);
+        // 清理script标签
+        setTimeout(() => script.remove(), 5000);
+    } catch (e) {
+        console.error('获取实时行情失败:', e);
+    }
+}
+
+// 更新股票价格
+function updateStockPrice(code, price) {
+    // 更新A公子持仓价格
+    DATA.agongzi.stocks.forEach(s => {
+        if (s.code === code) {
+            s.price = price;
+        }
+    });
+}
+
+// 定时刷新（每30秒）
+setInterval(fetchRealTimePrices, 30000);
+
+// 首次加载获取实时价格
+fetchRealTimePrices();
+
 render();
 </script>
 </body>
